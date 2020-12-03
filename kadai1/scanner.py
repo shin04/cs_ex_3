@@ -48,7 +48,7 @@ t_RBRACKET = '}'
 t_COMMA = ','
 t_SEMICOLON = ';'
 t_COLON = ':'
-t_INTERVAL = '..'
+t_INTERVAL = r'\.\.'
 t_PERIOD = '.'
 t_ASSIGN = ':='
 
