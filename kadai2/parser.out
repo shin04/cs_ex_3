@@ -1,0 +1,2017 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    COLON
+    FORWARD
+    FUNCTION
+    INTERVAL
+    LBRACKET
+    RBRACKET
+
+Grammar
+
+Rule 0     S' -> program
+Rule 1     program -> PROGRAM IDENT SEMICOLON outblock PERIOD
+Rule 2     outblock -> var_decl_part subprog_decl_part statement
+Rule 3     var_decl_part -> var_decl_list SEMICOLON
+Rule 4     var_decl_part -> <empty>
+Rule 5     var_decl_list -> var_decl_list SEMICOLON var_decl
+Rule 6     var_decl_list -> var_decl
+Rule 7     var_decl -> VAR id_list
+Rule 8     subprog_decl_part -> subprog_decl_list SEMICOLON
+Rule 9     subprog_decl_part -> <empty>
+Rule 10    subprog_decl_list -> subprog_decl_list SEMICOLON subprog_decl
+Rule 11    subprog_decl_list -> subprog_decl
+Rule 12    subprog_decl -> proc_decl
+Rule 13    proc_decl -> PROCEDURE proc_name SEMICOLON inblock
+Rule 14    proc_name -> IDENT
+Rule 15    inblock -> var_decl_part statement
+Rule 16    statement_list -> statement_list SEMICOLON statement
+Rule 17    statement_list -> statement
+Rule 18    statement -> assignment_statement
+Rule 19    statement -> if_statement
+Rule 20    statement -> while_statement
+Rule 21    statement -> for_statement
+Rule 22    statement -> proc_call_statement
+Rule 23    statement -> null_statement
+Rule 24    statement -> block_statement
+Rule 25    statement -> read_statement
+Rule 26    statement -> write_statement
+Rule 27    assignment_statement -> IDENT ASSIGN expression
+Rule 28    if_statement -> IF condition THEN statement else_statement
+Rule 29    else_statement -> ELSE statement
+Rule 30    else_statement -> <empty>
+Rule 31    while_statement -> WHILE condition DO statement
+Rule 32    for_statement -> FOR IDENT ASSIGN expression TO expression DO statement
+Rule 33    proc_call_statement -> proc_call_name
+Rule 34    proc_call_name -> IDENT
+Rule 35    block_statement -> BEGIN statement_list END
+Rule 36    read_statement -> READ LPAREN IDENT RPAREN
+Rule 37    write_statement -> WRITE LPAREN expression RPAREN
+Rule 38    null_statement -> <empty>
+Rule 39    condition -> expression EQ expression
+Rule 40    condition -> expression NEQ expression
+Rule 41    condition -> expression LE expression
+Rule 42    condition -> expression LT expression
+Rule 43    condition -> expression GE expression
+Rule 44    condition -> expression GT expression
+Rule 45    expression -> term
+Rule 46    expression -> PLUS term
+Rule 47    expression -> MINUS term
+Rule 48    expression -> expression PLUS term
+Rule 49    expression -> expression MINUS term
+Rule 50    term -> factor
+Rule 51    term -> term MULT factor
+Rule 52    term -> term DIV factor
+Rule 53    factor -> var_name
+Rule 54    factor -> NUMBER
+Rule 55    factor -> LPAREN expression RPAREN
+Rule 56    var_name -> IDENT
+Rule 57    id_list -> IDENT
+Rule 58    id_list -> id_list COMMA IDENT
+
+Terminals, with rules where they appear
+
+ASSIGN               : 27 32
+BEGIN                : 35
+COLON                : 
+COMMA                : 58
+DIV                  : 52
+DO                   : 31 32
+ELSE                 : 29
+END                  : 35
+EQ                   : 39
+FOR                  : 32
+FORWARD              : 
+FUNCTION             : 
+GE                   : 43
+GT                   : 44
+IDENT                : 1 14 27 32 34 36 56 57 58
+IF                   : 28
+INTERVAL             : 
+LBRACKET             : 
+LE                   : 41
+LPAREN               : 36 37 55
+LT                   : 42
+MINUS                : 47 49
+MULT                 : 51
+NEQ                  : 40
+NUMBER               : 54
+PERIOD               : 1
+PLUS                 : 46 48
+PROCEDURE            : 13
+PROGRAM              : 1
+RBRACKET             : 
+READ                 : 36
+RPAREN               : 36 37 55
+SEMICOLON            : 1 3 5 8 10 13 16
+THEN                 : 28
+TO                   : 32
+VAR                  : 7
+WHILE                : 31
+WRITE                : 37
+error                : 
+
+Nonterminals, with rules where they appear
+
+assignment_statement : 18
+block_statement      : 24
+condition            : 28 31
+else_statement       : 28
+expression           : 27 32 32 37 39 39 40 40 41 41 42 42 43 43 44 44 48 49 55
+factor               : 50 51 52
+for_statement        : 21
+id_list              : 7 58
+if_statement         : 19
+inblock              : 13
+null_statement       : 23
+outblock             : 1
+proc_call_name       : 33
+proc_call_statement  : 22
+proc_decl            : 12
+proc_name            : 13
+program              : 0
+read_statement       : 25
+statement            : 2 15 16 17 28 29 31 32
+statement_list       : 16 35
+subprog_decl         : 10 11
+subprog_decl_list    : 8 10
+subprog_decl_part    : 2
+term                 : 45 46 47 48 49 51 52
+var_decl             : 5 6
+var_decl_list        : 3 5
+var_decl_part        : 2 15
+var_name             : 53
+while_statement      : 20
+write_statement      : 26
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . program
+    (1) program -> . PROGRAM IDENT SEMICOLON outblock PERIOD
+
+    PROGRAM         shift and go to state 2
+
+    program                        shift and go to state 1
+
+state 1
+
+    (0) S' -> program .
+
+
+
+state 2
+
+    (1) program -> PROGRAM . IDENT SEMICOLON outblock PERIOD
+
+    IDENT           shift and go to state 3
+
+
+state 3
+
+    (1) program -> PROGRAM IDENT . SEMICOLON outblock PERIOD
+
+    SEMICOLON       shift and go to state 4
+
+
+state 4
+
+    (1) program -> PROGRAM IDENT SEMICOLON . outblock PERIOD
+    (2) outblock -> . var_decl_part subprog_decl_part statement
+    (3) var_decl_part -> . var_decl_list SEMICOLON
+    (4) var_decl_part -> .
+    (5) var_decl_list -> . var_decl_list SEMICOLON var_decl
+    (6) var_decl_list -> . var_decl
+    (7) var_decl -> . VAR id_list
+
+    PROCEDURE       reduce using rule 4 (var_decl_part -> .)
+    IDENT           reduce using rule 4 (var_decl_part -> .)
+    IF              reduce using rule 4 (var_decl_part -> .)
+    WHILE           reduce using rule 4 (var_decl_part -> .)
+    FOR             reduce using rule 4 (var_decl_part -> .)
+    BEGIN           reduce using rule 4 (var_decl_part -> .)
+    READ            reduce using rule 4 (var_decl_part -> .)
+    WRITE           reduce using rule 4 (var_decl_part -> .)
+    PERIOD          reduce using rule 4 (var_decl_part -> .)
+    VAR             shift and go to state 9
+
+    outblock                       shift and go to state 5
+    var_decl_part                  shift and go to state 6
+    var_decl_list                  shift and go to state 7
+    var_decl                       shift and go to state 8
+
+state 5
+
+    (1) program -> PROGRAM IDENT SEMICOLON outblock . PERIOD
+
+    PERIOD          shift and go to state 10
+
+
+state 6
+
+    (2) outblock -> var_decl_part . subprog_decl_part statement
+    (8) subprog_decl_part -> . subprog_decl_list SEMICOLON
+    (9) subprog_decl_part -> .
+    (10) subprog_decl_list -> . subprog_decl_list SEMICOLON subprog_decl
+    (11) subprog_decl_list -> . subprog_decl
+    (12) subprog_decl -> . proc_decl
+    (13) proc_decl -> . PROCEDURE proc_name SEMICOLON inblock
+
+    IDENT           reduce using rule 9 (subprog_decl_part -> .)
+    IF              reduce using rule 9 (subprog_decl_part -> .)
+    WHILE           reduce using rule 9 (subprog_decl_part -> .)
+    FOR             reduce using rule 9 (subprog_decl_part -> .)
+    BEGIN           reduce using rule 9 (subprog_decl_part -> .)
+    READ            reduce using rule 9 (subprog_decl_part -> .)
+    WRITE           reduce using rule 9 (subprog_decl_part -> .)
+    PERIOD          reduce using rule 9 (subprog_decl_part -> .)
+    PROCEDURE       shift and go to state 15
+
+    subprog_decl_part              shift and go to state 11
+    subprog_decl_list              shift and go to state 12
+    subprog_decl                   shift and go to state 13
+    proc_decl                      shift and go to state 14
+
+state 7
+
+    (3) var_decl_part -> var_decl_list . SEMICOLON
+    (5) var_decl_list -> var_decl_list . SEMICOLON var_decl
+
+    SEMICOLON       shift and go to state 16
+
+
+state 8
+
+    (6) var_decl_list -> var_decl .
+
+    SEMICOLON       reduce using rule 6 (var_decl_list -> var_decl .)
+
+
+state 9
+
+    (7) var_decl -> VAR . id_list
+    (57) id_list -> . IDENT
+    (58) id_list -> . id_list COMMA IDENT
+
+    IDENT           shift and go to state 18
+
+    id_list                        shift and go to state 17
+
+state 10
+
+    (1) program -> PROGRAM IDENT SEMICOLON outblock PERIOD .
+
+    $end            reduce using rule 1 (program -> PROGRAM IDENT SEMICOLON outblock PERIOD .)
+
+
+state 11
+
+    (2) outblock -> var_decl_part subprog_decl_part . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    PERIOD          reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 19
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 12
+
+    (8) subprog_decl_part -> subprog_decl_list . SEMICOLON
+    (10) subprog_decl_list -> subprog_decl_list . SEMICOLON subprog_decl
+
+    SEMICOLON       shift and go to state 37
+
+
+state 13
+
+    (11) subprog_decl_list -> subprog_decl .
+
+    SEMICOLON       reduce using rule 11 (subprog_decl_list -> subprog_decl .)
+
+
+state 14
+
+    (12) subprog_decl -> proc_decl .
+
+    SEMICOLON       reduce using rule 12 (subprog_decl -> proc_decl .)
+
+
+state 15
+
+    (13) proc_decl -> PROCEDURE . proc_name SEMICOLON inblock
+    (14) proc_name -> . IDENT
+
+    IDENT           shift and go to state 39
+
+    proc_name                      shift and go to state 38
+
+state 16
+
+    (3) var_decl_part -> var_decl_list SEMICOLON .
+    (5) var_decl_list -> var_decl_list SEMICOLON . var_decl
+    (7) var_decl -> . VAR id_list
+
+    PROCEDURE       reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    IDENT           reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    IF              reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    WHILE           reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    FOR             reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    BEGIN           reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    READ            reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    WRITE           reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    PERIOD          reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    SEMICOLON       reduce using rule 3 (var_decl_part -> var_decl_list SEMICOLON .)
+    VAR             shift and go to state 9
+
+    var_decl                       shift and go to state 40
+
+state 17
+
+    (7) var_decl -> VAR id_list .
+    (58) id_list -> id_list . COMMA IDENT
+
+    SEMICOLON       reduce using rule 7 (var_decl -> VAR id_list .)
+    COMMA           shift and go to state 41
+
+
+state 18
+
+    (57) id_list -> IDENT .
+
+    COMMA           reduce using rule 57 (id_list -> IDENT .)
+    SEMICOLON       reduce using rule 57 (id_list -> IDENT .)
+
+
+state 19
+
+    (2) outblock -> var_decl_part subprog_decl_part statement .
+
+    PERIOD          reduce using rule 2 (outblock -> var_decl_part subprog_decl_part statement .)
+
+
+state 20
+
+    (18) statement -> assignment_statement .
+
+    PERIOD          reduce using rule 18 (statement -> assignment_statement .)
+    END             reduce using rule 18 (statement -> assignment_statement .)
+    SEMICOLON       reduce using rule 18 (statement -> assignment_statement .)
+    ELSE            reduce using rule 18 (statement -> assignment_statement .)
+
+
+state 21
+
+    (19) statement -> if_statement .
+
+    PERIOD          reduce using rule 19 (statement -> if_statement .)
+    END             reduce using rule 19 (statement -> if_statement .)
+    SEMICOLON       reduce using rule 19 (statement -> if_statement .)
+    ELSE            reduce using rule 19 (statement -> if_statement .)
+
+
+state 22
+
+    (20) statement -> while_statement .
+
+    PERIOD          reduce using rule 20 (statement -> while_statement .)
+    END             reduce using rule 20 (statement -> while_statement .)
+    SEMICOLON       reduce using rule 20 (statement -> while_statement .)
+    ELSE            reduce using rule 20 (statement -> while_statement .)
+
+
+state 23
+
+    (21) statement -> for_statement .
+
+    PERIOD          reduce using rule 21 (statement -> for_statement .)
+    END             reduce using rule 21 (statement -> for_statement .)
+    SEMICOLON       reduce using rule 21 (statement -> for_statement .)
+    ELSE            reduce using rule 21 (statement -> for_statement .)
+
+
+state 24
+
+    (22) statement -> proc_call_statement .
+
+    PERIOD          reduce using rule 22 (statement -> proc_call_statement .)
+    END             reduce using rule 22 (statement -> proc_call_statement .)
+    SEMICOLON       reduce using rule 22 (statement -> proc_call_statement .)
+    ELSE            reduce using rule 22 (statement -> proc_call_statement .)
+
+
+state 25
+
+    (23) statement -> null_statement .
+
+    PERIOD          reduce using rule 23 (statement -> null_statement .)
+    END             reduce using rule 23 (statement -> null_statement .)
+    SEMICOLON       reduce using rule 23 (statement -> null_statement .)
+    ELSE            reduce using rule 23 (statement -> null_statement .)
+
+
+state 26
+
+    (24) statement -> block_statement .
+
+    PERIOD          reduce using rule 24 (statement -> block_statement .)
+    END             reduce using rule 24 (statement -> block_statement .)
+    SEMICOLON       reduce using rule 24 (statement -> block_statement .)
+    ELSE            reduce using rule 24 (statement -> block_statement .)
+
+
+state 27
+
+    (25) statement -> read_statement .
+
+    PERIOD          reduce using rule 25 (statement -> read_statement .)
+    END             reduce using rule 25 (statement -> read_statement .)
+    SEMICOLON       reduce using rule 25 (statement -> read_statement .)
+    ELSE            reduce using rule 25 (statement -> read_statement .)
+
+
+state 28
+
+    (26) statement -> write_statement .
+
+    PERIOD          reduce using rule 26 (statement -> write_statement .)
+    END             reduce using rule 26 (statement -> write_statement .)
+    SEMICOLON       reduce using rule 26 (statement -> write_statement .)
+    ELSE            reduce using rule 26 (statement -> write_statement .)
+
+
+state 29
+
+    (27) assignment_statement -> IDENT . ASSIGN expression
+    (34) proc_call_name -> IDENT .
+
+    ASSIGN          shift and go to state 42
+    PERIOD          reduce using rule 34 (proc_call_name -> IDENT .)
+    END             reduce using rule 34 (proc_call_name -> IDENT .)
+    SEMICOLON       reduce using rule 34 (proc_call_name -> IDENT .)
+    ELSE            reduce using rule 34 (proc_call_name -> IDENT .)
+
+
+state 30
+
+    (28) if_statement -> IF . condition THEN statement else_statement
+    (39) condition -> . expression EQ expression
+    (40) condition -> . expression NEQ expression
+    (41) condition -> . expression LE expression
+    (42) condition -> . expression LT expression
+    (43) condition -> . expression GE expression
+    (44) condition -> . expression GT expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    condition                      shift and go to state 43
+    expression                     shift and go to state 44
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 31
+
+    (31) while_statement -> WHILE . condition DO statement
+    (39) condition -> . expression EQ expression
+    (40) condition -> . expression NEQ expression
+    (41) condition -> . expression LE expression
+    (42) condition -> . expression LT expression
+    (43) condition -> . expression GE expression
+    (44) condition -> . expression GT expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    condition                      shift and go to state 53
+    expression                     shift and go to state 44
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 32
+
+    (32) for_statement -> FOR . IDENT ASSIGN expression TO expression DO statement
+
+    IDENT           shift and go to state 54
+
+
+state 33
+
+    (33) proc_call_statement -> proc_call_name .
+
+    PERIOD          reduce using rule 33 (proc_call_statement -> proc_call_name .)
+    END             reduce using rule 33 (proc_call_statement -> proc_call_name .)
+    SEMICOLON       reduce using rule 33 (proc_call_statement -> proc_call_name .)
+    ELSE            reduce using rule 33 (proc_call_statement -> proc_call_name .)
+
+
+state 34
+
+    (35) block_statement -> BEGIN . statement_list END
+    (16) statement_list -> . statement_list SEMICOLON statement
+    (17) statement_list -> . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement_list                 shift and go to state 55
+    statement                      shift and go to state 56
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 35
+
+    (36) read_statement -> READ . LPAREN IDENT RPAREN
+
+    LPAREN          shift and go to state 57
+
+
+state 36
+
+    (37) write_statement -> WRITE . LPAREN expression RPAREN
+
+    LPAREN          shift and go to state 58
+
+
+state 37
+
+    (8) subprog_decl_part -> subprog_decl_list SEMICOLON .
+    (10) subprog_decl_list -> subprog_decl_list SEMICOLON . subprog_decl
+    (12) subprog_decl -> . proc_decl
+    (13) proc_decl -> . PROCEDURE proc_name SEMICOLON inblock
+
+    IDENT           reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    IF              reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    WHILE           reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    FOR             reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    BEGIN           reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    READ            reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    WRITE           reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    PERIOD          reduce using rule 8 (subprog_decl_part -> subprog_decl_list SEMICOLON .)
+    PROCEDURE       shift and go to state 15
+
+    subprog_decl                   shift and go to state 59
+    proc_decl                      shift and go to state 14
+
+state 38
+
+    (13) proc_decl -> PROCEDURE proc_name . SEMICOLON inblock
+
+    SEMICOLON       shift and go to state 60
+
+
+state 39
+
+    (14) proc_name -> IDENT .
+
+    SEMICOLON       reduce using rule 14 (proc_name -> IDENT .)
+
+
+state 40
+
+    (5) var_decl_list -> var_decl_list SEMICOLON var_decl .
+
+    SEMICOLON       reduce using rule 5 (var_decl_list -> var_decl_list SEMICOLON var_decl .)
+
+
+state 41
+
+    (58) id_list -> id_list COMMA . IDENT
+
+    IDENT           shift and go to state 61
+
+
+state 42
+
+    (27) assignment_statement -> IDENT ASSIGN . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 62
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 43
+
+    (28) if_statement -> IF condition . THEN statement else_statement
+
+    THEN            shift and go to state 63
+
+
+state 44
+
+    (39) condition -> expression . EQ expression
+    (40) condition -> expression . NEQ expression
+    (41) condition -> expression . LE expression
+    (42) condition -> expression . LT expression
+    (43) condition -> expression . GE expression
+    (44) condition -> expression . GT expression
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    EQ              shift and go to state 64
+    NEQ             shift and go to state 65
+    LE              shift and go to state 66
+    LT              shift and go to state 67
+    GE              shift and go to state 68
+    GT              shift and go to state 69
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 45
+
+    (45) expression -> term .
+    (51) term -> term . MULT factor
+    (52) term -> term . DIV factor
+
+    EQ              reduce using rule 45 (expression -> term .)
+    NEQ             reduce using rule 45 (expression -> term .)
+    LE              reduce using rule 45 (expression -> term .)
+    LT              reduce using rule 45 (expression -> term .)
+    GE              reduce using rule 45 (expression -> term .)
+    GT              reduce using rule 45 (expression -> term .)
+    PLUS            reduce using rule 45 (expression -> term .)
+    MINUS           reduce using rule 45 (expression -> term .)
+    PERIOD          reduce using rule 45 (expression -> term .)
+    END             reduce using rule 45 (expression -> term .)
+    SEMICOLON       reduce using rule 45 (expression -> term .)
+    ELSE            reduce using rule 45 (expression -> term .)
+    RPAREN          reduce using rule 45 (expression -> term .)
+    THEN            reduce using rule 45 (expression -> term .)
+    DO              reduce using rule 45 (expression -> term .)
+    TO              reduce using rule 45 (expression -> term .)
+    MULT            shift and go to state 72
+    DIV             shift and go to state 73
+
+
+state 46
+
+    (46) expression -> PLUS . term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    term                           shift and go to state 74
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 47
+
+    (47) expression -> MINUS . term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    term                           shift and go to state 75
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 48
+
+    (50) term -> factor .
+
+    MULT            reduce using rule 50 (term -> factor .)
+    DIV             reduce using rule 50 (term -> factor .)
+    EQ              reduce using rule 50 (term -> factor .)
+    NEQ             reduce using rule 50 (term -> factor .)
+    LE              reduce using rule 50 (term -> factor .)
+    LT              reduce using rule 50 (term -> factor .)
+    GE              reduce using rule 50 (term -> factor .)
+    GT              reduce using rule 50 (term -> factor .)
+    PLUS            reduce using rule 50 (term -> factor .)
+    MINUS           reduce using rule 50 (term -> factor .)
+    PERIOD          reduce using rule 50 (term -> factor .)
+    END             reduce using rule 50 (term -> factor .)
+    SEMICOLON       reduce using rule 50 (term -> factor .)
+    ELSE            reduce using rule 50 (term -> factor .)
+    RPAREN          reduce using rule 50 (term -> factor .)
+    THEN            reduce using rule 50 (term -> factor .)
+    DO              reduce using rule 50 (term -> factor .)
+    TO              reduce using rule 50 (term -> factor .)
+
+
+state 49
+
+    (53) factor -> var_name .
+
+    MULT            reduce using rule 53 (factor -> var_name .)
+    DIV             reduce using rule 53 (factor -> var_name .)
+    EQ              reduce using rule 53 (factor -> var_name .)
+    NEQ             reduce using rule 53 (factor -> var_name .)
+    LE              reduce using rule 53 (factor -> var_name .)
+    LT              reduce using rule 53 (factor -> var_name .)
+    GE              reduce using rule 53 (factor -> var_name .)
+    GT              reduce using rule 53 (factor -> var_name .)
+    PLUS            reduce using rule 53 (factor -> var_name .)
+    MINUS           reduce using rule 53 (factor -> var_name .)
+    PERIOD          reduce using rule 53 (factor -> var_name .)
+    END             reduce using rule 53 (factor -> var_name .)
+    SEMICOLON       reduce using rule 53 (factor -> var_name .)
+    ELSE            reduce using rule 53 (factor -> var_name .)
+    RPAREN          reduce using rule 53 (factor -> var_name .)
+    THEN            reduce using rule 53 (factor -> var_name .)
+    DO              reduce using rule 53 (factor -> var_name .)
+    TO              reduce using rule 53 (factor -> var_name .)
+
+
+state 50
+
+    (54) factor -> NUMBER .
+
+    MULT            reduce using rule 54 (factor -> NUMBER .)
+    DIV             reduce using rule 54 (factor -> NUMBER .)
+    EQ              reduce using rule 54 (factor -> NUMBER .)
+    NEQ             reduce using rule 54 (factor -> NUMBER .)
+    LE              reduce using rule 54 (factor -> NUMBER .)
+    LT              reduce using rule 54 (factor -> NUMBER .)
+    GE              reduce using rule 54 (factor -> NUMBER .)
+    GT              reduce using rule 54 (factor -> NUMBER .)
+    PLUS            reduce using rule 54 (factor -> NUMBER .)
+    MINUS           reduce using rule 54 (factor -> NUMBER .)
+    PERIOD          reduce using rule 54 (factor -> NUMBER .)
+    END             reduce using rule 54 (factor -> NUMBER .)
+    SEMICOLON       reduce using rule 54 (factor -> NUMBER .)
+    ELSE            reduce using rule 54 (factor -> NUMBER .)
+    RPAREN          reduce using rule 54 (factor -> NUMBER .)
+    THEN            reduce using rule 54 (factor -> NUMBER .)
+    DO              reduce using rule 54 (factor -> NUMBER .)
+    TO              reduce using rule 54 (factor -> NUMBER .)
+
+
+state 51
+
+    (55) factor -> LPAREN . expression RPAREN
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 76
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 52
+
+    (56) var_name -> IDENT .
+
+    MULT            reduce using rule 56 (var_name -> IDENT .)
+    DIV             reduce using rule 56 (var_name -> IDENT .)
+    EQ              reduce using rule 56 (var_name -> IDENT .)
+    NEQ             reduce using rule 56 (var_name -> IDENT .)
+    LE              reduce using rule 56 (var_name -> IDENT .)
+    LT              reduce using rule 56 (var_name -> IDENT .)
+    GE              reduce using rule 56 (var_name -> IDENT .)
+    GT              reduce using rule 56 (var_name -> IDENT .)
+    PLUS            reduce using rule 56 (var_name -> IDENT .)
+    MINUS           reduce using rule 56 (var_name -> IDENT .)
+    PERIOD          reduce using rule 56 (var_name -> IDENT .)
+    END             reduce using rule 56 (var_name -> IDENT .)
+    SEMICOLON       reduce using rule 56 (var_name -> IDENT .)
+    ELSE            reduce using rule 56 (var_name -> IDENT .)
+    RPAREN          reduce using rule 56 (var_name -> IDENT .)
+    THEN            reduce using rule 56 (var_name -> IDENT .)
+    DO              reduce using rule 56 (var_name -> IDENT .)
+    TO              reduce using rule 56 (var_name -> IDENT .)
+
+
+state 53
+
+    (31) while_statement -> WHILE condition . DO statement
+
+    DO              shift and go to state 77
+
+
+state 54
+
+    (32) for_statement -> FOR IDENT . ASSIGN expression TO expression DO statement
+
+    ASSIGN          shift and go to state 78
+
+
+state 55
+
+    (35) block_statement -> BEGIN statement_list . END
+    (16) statement_list -> statement_list . SEMICOLON statement
+
+    END             shift and go to state 79
+    SEMICOLON       shift and go to state 80
+
+
+state 56
+
+    (17) statement_list -> statement .
+
+    END             reduce using rule 17 (statement_list -> statement .)
+    SEMICOLON       reduce using rule 17 (statement_list -> statement .)
+
+
+state 57
+
+    (36) read_statement -> READ LPAREN . IDENT RPAREN
+
+    IDENT           shift and go to state 81
+
+
+state 58
+
+    (37) write_statement -> WRITE LPAREN . expression RPAREN
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 82
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 59
+
+    (10) subprog_decl_list -> subprog_decl_list SEMICOLON subprog_decl .
+
+    SEMICOLON       reduce using rule 10 (subprog_decl_list -> subprog_decl_list SEMICOLON subprog_decl .)
+
+
+state 60
+
+    (13) proc_decl -> PROCEDURE proc_name SEMICOLON . inblock
+    (15) inblock -> . var_decl_part statement
+    (3) var_decl_part -> . var_decl_list SEMICOLON
+    (4) var_decl_part -> .
+    (5) var_decl_list -> . var_decl_list SEMICOLON var_decl
+    (6) var_decl_list -> . var_decl
+    (7) var_decl -> . VAR id_list
+
+    IDENT           reduce using rule 4 (var_decl_part -> .)
+    IF              reduce using rule 4 (var_decl_part -> .)
+    WHILE           reduce using rule 4 (var_decl_part -> .)
+    FOR             reduce using rule 4 (var_decl_part -> .)
+    BEGIN           reduce using rule 4 (var_decl_part -> .)
+    READ            reduce using rule 4 (var_decl_part -> .)
+    WRITE           reduce using rule 4 (var_decl_part -> .)
+    SEMICOLON       reduce using rule 4 (var_decl_part -> .)
+    VAR             shift and go to state 9
+
+    inblock                        shift and go to state 83
+    var_decl_part                  shift and go to state 84
+    var_decl_list                  shift and go to state 7
+    var_decl                       shift and go to state 8
+
+state 61
+
+    (58) id_list -> id_list COMMA IDENT .
+
+    COMMA           reduce using rule 58 (id_list -> id_list COMMA IDENT .)
+    SEMICOLON       reduce using rule 58 (id_list -> id_list COMMA IDENT .)
+
+
+state 62
+
+    (27) assignment_statement -> IDENT ASSIGN expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    PERIOD          reduce using rule 27 (assignment_statement -> IDENT ASSIGN expression .)
+    END             reduce using rule 27 (assignment_statement -> IDENT ASSIGN expression .)
+    SEMICOLON       reduce using rule 27 (assignment_statement -> IDENT ASSIGN expression .)
+    ELSE            reduce using rule 27 (assignment_statement -> IDENT ASSIGN expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 63
+
+    (28) if_statement -> IF condition THEN . statement else_statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    ELSE            reduce using rule 38 (null_statement -> .)
+    PERIOD          reduce using rule 38 (null_statement -> .)
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 85
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 64
+
+    (39) condition -> expression EQ . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 86
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 65
+
+    (40) condition -> expression NEQ . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 87
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 66
+
+    (41) condition -> expression LE . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 88
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 67
+
+    (42) condition -> expression LT . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 89
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 68
+
+    (43) condition -> expression GE . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 90
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 69
+
+    (44) condition -> expression GT . expression
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 91
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 70
+
+    (48) expression -> expression PLUS . term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    term                           shift and go to state 92
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 71
+
+    (49) expression -> expression MINUS . term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    term                           shift and go to state 93
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 72
+
+    (51) term -> term MULT . factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    factor                         shift and go to state 94
+    var_name                       shift and go to state 49
+
+state 73
+
+    (52) term -> term DIV . factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    factor                         shift and go to state 95
+    var_name                       shift and go to state 49
+
+state 74
+
+    (46) expression -> PLUS term .
+    (51) term -> term . MULT factor
+    (52) term -> term . DIV factor
+
+    EQ              reduce using rule 46 (expression -> PLUS term .)
+    NEQ             reduce using rule 46 (expression -> PLUS term .)
+    LE              reduce using rule 46 (expression -> PLUS term .)
+    LT              reduce using rule 46 (expression -> PLUS term .)
+    GE              reduce using rule 46 (expression -> PLUS term .)
+    GT              reduce using rule 46 (expression -> PLUS term .)
+    PLUS            reduce using rule 46 (expression -> PLUS term .)
+    MINUS           reduce using rule 46 (expression -> PLUS term .)
+    PERIOD          reduce using rule 46 (expression -> PLUS term .)
+    END             reduce using rule 46 (expression -> PLUS term .)
+    SEMICOLON       reduce using rule 46 (expression -> PLUS term .)
+    ELSE            reduce using rule 46 (expression -> PLUS term .)
+    RPAREN          reduce using rule 46 (expression -> PLUS term .)
+    THEN            reduce using rule 46 (expression -> PLUS term .)
+    DO              reduce using rule 46 (expression -> PLUS term .)
+    TO              reduce using rule 46 (expression -> PLUS term .)
+    MULT            shift and go to state 72
+    DIV             shift and go to state 73
+
+
+state 75
+
+    (47) expression -> MINUS term .
+    (51) term -> term . MULT factor
+    (52) term -> term . DIV factor
+
+    EQ              reduce using rule 47 (expression -> MINUS term .)
+    NEQ             reduce using rule 47 (expression -> MINUS term .)
+    LE              reduce using rule 47 (expression -> MINUS term .)
+    LT              reduce using rule 47 (expression -> MINUS term .)
+    GE              reduce using rule 47 (expression -> MINUS term .)
+    GT              reduce using rule 47 (expression -> MINUS term .)
+    PLUS            reduce using rule 47 (expression -> MINUS term .)
+    MINUS           reduce using rule 47 (expression -> MINUS term .)
+    PERIOD          reduce using rule 47 (expression -> MINUS term .)
+    END             reduce using rule 47 (expression -> MINUS term .)
+    SEMICOLON       reduce using rule 47 (expression -> MINUS term .)
+    ELSE            reduce using rule 47 (expression -> MINUS term .)
+    RPAREN          reduce using rule 47 (expression -> MINUS term .)
+    THEN            reduce using rule 47 (expression -> MINUS term .)
+    DO              reduce using rule 47 (expression -> MINUS term .)
+    TO              reduce using rule 47 (expression -> MINUS term .)
+    MULT            shift and go to state 72
+    DIV             shift and go to state 73
+
+
+state 76
+
+    (55) factor -> LPAREN expression . RPAREN
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    RPAREN          shift and go to state 96
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 77
+
+    (31) while_statement -> WHILE condition DO . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    ELSE            reduce using rule 38 (null_statement -> .)
+    PERIOD          reduce using rule 38 (null_statement -> .)
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 97
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 78
+
+    (32) for_statement -> FOR IDENT ASSIGN . expression TO expression DO statement
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 98
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 79
+
+    (35) block_statement -> BEGIN statement_list END .
+
+    PERIOD          reduce using rule 35 (block_statement -> BEGIN statement_list END .)
+    END             reduce using rule 35 (block_statement -> BEGIN statement_list END .)
+    SEMICOLON       reduce using rule 35 (block_statement -> BEGIN statement_list END .)
+    ELSE            reduce using rule 35 (block_statement -> BEGIN statement_list END .)
+
+
+state 80
+
+    (16) statement_list -> statement_list SEMICOLON . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 99
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 81
+
+    (36) read_statement -> READ LPAREN IDENT . RPAREN
+
+    RPAREN          shift and go to state 100
+
+
+state 82
+
+    (37) write_statement -> WRITE LPAREN expression . RPAREN
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    RPAREN          shift and go to state 101
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 83
+
+    (13) proc_decl -> PROCEDURE proc_name SEMICOLON inblock .
+
+    SEMICOLON       reduce using rule 13 (proc_decl -> PROCEDURE proc_name SEMICOLON inblock .)
+
+
+state 84
+
+    (15) inblock -> var_decl_part . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 102
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 85
+
+    (28) if_statement -> IF condition THEN statement . else_statement
+    (29) else_statement -> . ELSE statement
+    (30) else_statement -> .
+
+  ! shift/reduce conflict for ELSE resolved as shift
+    ELSE            shift and go to state 104
+    PERIOD          reduce using rule 30 (else_statement -> .)
+    END             reduce using rule 30 (else_statement -> .)
+    SEMICOLON       reduce using rule 30 (else_statement -> .)
+
+  ! ELSE            [ reduce using rule 30 (else_statement -> .) ]
+
+    else_statement                 shift and go to state 103
+
+state 86
+
+    (39) condition -> expression EQ expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 39 (condition -> expression EQ expression .)
+    DO              reduce using rule 39 (condition -> expression EQ expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 87
+
+    (40) condition -> expression NEQ expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 40 (condition -> expression NEQ expression .)
+    DO              reduce using rule 40 (condition -> expression NEQ expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 88
+
+    (41) condition -> expression LE expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 41 (condition -> expression LE expression .)
+    DO              reduce using rule 41 (condition -> expression LE expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 89
+
+    (42) condition -> expression LT expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 42 (condition -> expression LT expression .)
+    DO              reduce using rule 42 (condition -> expression LT expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 90
+
+    (43) condition -> expression GE expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 43 (condition -> expression GE expression .)
+    DO              reduce using rule 43 (condition -> expression GE expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 91
+
+    (44) condition -> expression GT expression .
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    THEN            reduce using rule 44 (condition -> expression GT expression .)
+    DO              reduce using rule 44 (condition -> expression GT expression .)
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 92
+
+    (48) expression -> expression PLUS term .
+    (51) term -> term . MULT factor
+    (52) term -> term . DIV factor
+
+    EQ              reduce using rule 48 (expression -> expression PLUS term .)
+    NEQ             reduce using rule 48 (expression -> expression PLUS term .)
+    LE              reduce using rule 48 (expression -> expression PLUS term .)
+    LT              reduce using rule 48 (expression -> expression PLUS term .)
+    GE              reduce using rule 48 (expression -> expression PLUS term .)
+    GT              reduce using rule 48 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 48 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 48 (expression -> expression PLUS term .)
+    PERIOD          reduce using rule 48 (expression -> expression PLUS term .)
+    END             reduce using rule 48 (expression -> expression PLUS term .)
+    SEMICOLON       reduce using rule 48 (expression -> expression PLUS term .)
+    ELSE            reduce using rule 48 (expression -> expression PLUS term .)
+    RPAREN          reduce using rule 48 (expression -> expression PLUS term .)
+    THEN            reduce using rule 48 (expression -> expression PLUS term .)
+    DO              reduce using rule 48 (expression -> expression PLUS term .)
+    TO              reduce using rule 48 (expression -> expression PLUS term .)
+    MULT            shift and go to state 72
+    DIV             shift and go to state 73
+
+
+state 93
+
+    (49) expression -> expression MINUS term .
+    (51) term -> term . MULT factor
+    (52) term -> term . DIV factor
+
+    EQ              reduce using rule 49 (expression -> expression MINUS term .)
+    NEQ             reduce using rule 49 (expression -> expression MINUS term .)
+    LE              reduce using rule 49 (expression -> expression MINUS term .)
+    LT              reduce using rule 49 (expression -> expression MINUS term .)
+    GE              reduce using rule 49 (expression -> expression MINUS term .)
+    GT              reduce using rule 49 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 49 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 49 (expression -> expression MINUS term .)
+    PERIOD          reduce using rule 49 (expression -> expression MINUS term .)
+    END             reduce using rule 49 (expression -> expression MINUS term .)
+    SEMICOLON       reduce using rule 49 (expression -> expression MINUS term .)
+    ELSE            reduce using rule 49 (expression -> expression MINUS term .)
+    RPAREN          reduce using rule 49 (expression -> expression MINUS term .)
+    THEN            reduce using rule 49 (expression -> expression MINUS term .)
+    DO              reduce using rule 49 (expression -> expression MINUS term .)
+    TO              reduce using rule 49 (expression -> expression MINUS term .)
+    MULT            shift and go to state 72
+    DIV             shift and go to state 73
+
+
+state 94
+
+    (51) term -> term MULT factor .
+
+    MULT            reduce using rule 51 (term -> term MULT factor .)
+    DIV             reduce using rule 51 (term -> term MULT factor .)
+    EQ              reduce using rule 51 (term -> term MULT factor .)
+    NEQ             reduce using rule 51 (term -> term MULT factor .)
+    LE              reduce using rule 51 (term -> term MULT factor .)
+    LT              reduce using rule 51 (term -> term MULT factor .)
+    GE              reduce using rule 51 (term -> term MULT factor .)
+    GT              reduce using rule 51 (term -> term MULT factor .)
+    PLUS            reduce using rule 51 (term -> term MULT factor .)
+    MINUS           reduce using rule 51 (term -> term MULT factor .)
+    PERIOD          reduce using rule 51 (term -> term MULT factor .)
+    END             reduce using rule 51 (term -> term MULT factor .)
+    SEMICOLON       reduce using rule 51 (term -> term MULT factor .)
+    ELSE            reduce using rule 51 (term -> term MULT factor .)
+    RPAREN          reduce using rule 51 (term -> term MULT factor .)
+    THEN            reduce using rule 51 (term -> term MULT factor .)
+    DO              reduce using rule 51 (term -> term MULT factor .)
+    TO              reduce using rule 51 (term -> term MULT factor .)
+
+
+state 95
+
+    (52) term -> term DIV factor .
+
+    MULT            reduce using rule 52 (term -> term DIV factor .)
+    DIV             reduce using rule 52 (term -> term DIV factor .)
+    EQ              reduce using rule 52 (term -> term DIV factor .)
+    NEQ             reduce using rule 52 (term -> term DIV factor .)
+    LE              reduce using rule 52 (term -> term DIV factor .)
+    LT              reduce using rule 52 (term -> term DIV factor .)
+    GE              reduce using rule 52 (term -> term DIV factor .)
+    GT              reduce using rule 52 (term -> term DIV factor .)
+    PLUS            reduce using rule 52 (term -> term DIV factor .)
+    MINUS           reduce using rule 52 (term -> term DIV factor .)
+    PERIOD          reduce using rule 52 (term -> term DIV factor .)
+    END             reduce using rule 52 (term -> term DIV factor .)
+    SEMICOLON       reduce using rule 52 (term -> term DIV factor .)
+    ELSE            reduce using rule 52 (term -> term DIV factor .)
+    RPAREN          reduce using rule 52 (term -> term DIV factor .)
+    THEN            reduce using rule 52 (term -> term DIV factor .)
+    DO              reduce using rule 52 (term -> term DIV factor .)
+    TO              reduce using rule 52 (term -> term DIV factor .)
+
+
+state 96
+
+    (55) factor -> LPAREN expression RPAREN .
+
+    MULT            reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    DIV             reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    EQ              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    NEQ             reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    LE              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    LT              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    GE              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    GT              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    PLUS            reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    MINUS           reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    PERIOD          reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    END             reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    ELSE            reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    RPAREN          reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    THEN            reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    DO              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+    TO              reduce using rule 55 (factor -> LPAREN expression RPAREN .)
+
+
+state 97
+
+    (31) while_statement -> WHILE condition DO statement .
+
+    PERIOD          reduce using rule 31 (while_statement -> WHILE condition DO statement .)
+    END             reduce using rule 31 (while_statement -> WHILE condition DO statement .)
+    SEMICOLON       reduce using rule 31 (while_statement -> WHILE condition DO statement .)
+    ELSE            reduce using rule 31 (while_statement -> WHILE condition DO statement .)
+
+
+state 98
+
+    (32) for_statement -> FOR IDENT ASSIGN expression . TO expression DO statement
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    TO              shift and go to state 105
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 99
+
+    (16) statement_list -> statement_list SEMICOLON statement .
+
+    END             reduce using rule 16 (statement_list -> statement_list SEMICOLON statement .)
+    SEMICOLON       reduce using rule 16 (statement_list -> statement_list SEMICOLON statement .)
+
+
+state 100
+
+    (36) read_statement -> READ LPAREN IDENT RPAREN .
+
+    PERIOD          reduce using rule 36 (read_statement -> READ LPAREN IDENT RPAREN .)
+    END             reduce using rule 36 (read_statement -> READ LPAREN IDENT RPAREN .)
+    SEMICOLON       reduce using rule 36 (read_statement -> READ LPAREN IDENT RPAREN .)
+    ELSE            reduce using rule 36 (read_statement -> READ LPAREN IDENT RPAREN .)
+
+
+state 101
+
+    (37) write_statement -> WRITE LPAREN expression RPAREN .
+
+    PERIOD          reduce using rule 37 (write_statement -> WRITE LPAREN expression RPAREN .)
+    END             reduce using rule 37 (write_statement -> WRITE LPAREN expression RPAREN .)
+    SEMICOLON       reduce using rule 37 (write_statement -> WRITE LPAREN expression RPAREN .)
+    ELSE            reduce using rule 37 (write_statement -> WRITE LPAREN expression RPAREN .)
+
+
+state 102
+
+    (15) inblock -> var_decl_part statement .
+
+    SEMICOLON       reduce using rule 15 (inblock -> var_decl_part statement .)
+
+
+state 103
+
+    (28) if_statement -> IF condition THEN statement else_statement .
+
+    PERIOD          reduce using rule 28 (if_statement -> IF condition THEN statement else_statement .)
+    END             reduce using rule 28 (if_statement -> IF condition THEN statement else_statement .)
+    SEMICOLON       reduce using rule 28 (if_statement -> IF condition THEN statement else_statement .)
+    ELSE            reduce using rule 28 (if_statement -> IF condition THEN statement else_statement .)
+
+
+state 104
+
+    (29) else_statement -> ELSE . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    ELSE            reduce using rule 38 (null_statement -> .)
+    PERIOD          reduce using rule 38 (null_statement -> .)
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 106
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 105
+
+    (32) for_statement -> FOR IDENT ASSIGN expression TO . expression DO statement
+    (45) expression -> . term
+    (46) expression -> . PLUS term
+    (47) expression -> . MINUS term
+    (48) expression -> . expression PLUS term
+    (49) expression -> . expression MINUS term
+    (50) term -> . factor
+    (51) term -> . term MULT factor
+    (52) term -> . term DIV factor
+    (53) factor -> . var_name
+    (54) factor -> . NUMBER
+    (55) factor -> . LPAREN expression RPAREN
+    (56) var_name -> . IDENT
+
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+    NUMBER          shift and go to state 50
+    LPAREN          shift and go to state 51
+    IDENT           shift and go to state 52
+
+    expression                     shift and go to state 107
+    term                           shift and go to state 45
+    factor                         shift and go to state 48
+    var_name                       shift and go to state 49
+
+state 106
+
+    (29) else_statement -> ELSE statement .
+
+    ELSE            reduce using rule 29 (else_statement -> ELSE statement .)
+    PERIOD          reduce using rule 29 (else_statement -> ELSE statement .)
+    END             reduce using rule 29 (else_statement -> ELSE statement .)
+    SEMICOLON       reduce using rule 29 (else_statement -> ELSE statement .)
+
+
+state 107
+
+    (32) for_statement -> FOR IDENT ASSIGN expression TO expression . DO statement
+    (48) expression -> expression . PLUS term
+    (49) expression -> expression . MINUS term
+
+    DO              shift and go to state 108
+    PLUS            shift and go to state 70
+    MINUS           shift and go to state 71
+
+
+state 108
+
+    (32) for_statement -> FOR IDENT ASSIGN expression TO expression DO . statement
+    (18) statement -> . assignment_statement
+    (19) statement -> . if_statement
+    (20) statement -> . while_statement
+    (21) statement -> . for_statement
+    (22) statement -> . proc_call_statement
+    (23) statement -> . null_statement
+    (24) statement -> . block_statement
+    (25) statement -> . read_statement
+    (26) statement -> . write_statement
+    (27) assignment_statement -> . IDENT ASSIGN expression
+    (28) if_statement -> . IF condition THEN statement else_statement
+    (31) while_statement -> . WHILE condition DO statement
+    (32) for_statement -> . FOR IDENT ASSIGN expression TO expression DO statement
+    (33) proc_call_statement -> . proc_call_name
+    (38) null_statement -> .
+    (35) block_statement -> . BEGIN statement_list END
+    (36) read_statement -> . READ LPAREN IDENT RPAREN
+    (37) write_statement -> . WRITE LPAREN expression RPAREN
+    (34) proc_call_name -> . IDENT
+
+    IDENT           shift and go to state 29
+    IF              shift and go to state 30
+    WHILE           shift and go to state 31
+    FOR             shift and go to state 32
+    ELSE            reduce using rule 38 (null_statement -> .)
+    PERIOD          reduce using rule 38 (null_statement -> .)
+    END             reduce using rule 38 (null_statement -> .)
+    SEMICOLON       reduce using rule 38 (null_statement -> .)
+    BEGIN           shift and go to state 34
+    READ            shift and go to state 35
+    WRITE           shift and go to state 36
+
+    statement                      shift and go to state 109
+    assignment_statement           shift and go to state 20
+    if_statement                   shift and go to state 21
+    while_statement                shift and go to state 22
+    for_statement                  shift and go to state 23
+    proc_call_statement            shift and go to state 24
+    null_statement                 shift and go to state 25
+    block_statement                shift and go to state 26
+    read_statement                 shift and go to state 27
+    write_statement                shift and go to state 28
+    proc_call_name                 shift and go to state 33
+
+state 109
+
+    (32) for_statement -> FOR IDENT ASSIGN expression TO expression DO statement .
+
+    PERIOD          reduce using rule 32 (for_statement -> FOR IDENT ASSIGN expression TO expression DO statement .)
+    END             reduce using rule 32 (for_statement -> FOR IDENT ASSIGN expression TO expression DO statement .)
+    SEMICOLON       reduce using rule 32 (for_statement -> FOR IDENT ASSIGN expression TO expression DO statement .)
+    ELSE            reduce using rule 32 (for_statement -> FOR IDENT ASSIGN expression TO expression DO statement .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for ELSE in state 85 resolved as shift
