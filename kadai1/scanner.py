@@ -5,7 +5,12 @@ import sys
 import ply.lex as lex
 import ply.yacc as yacc
 
-tokens = ('IDENT', 'NUMBER', 'BEGIN', ・・・, 'ASSIGN')
+tokens = (
+    'BEGIN', 'DIV', 'DO', 'ELSE', 'END', 'FOR', 'FORWARD', 'FUNCTION', 'IF', 'PROCEDURE', 'PROGRAM',
+    'READ', 'THEN', 'TO', 'VAR', 'WHILE', 'WRITE',
+    'PLUS', 'MINUS', 'MULT', 'EQ', 'NEQ', 'LE', 'LT', 'GE', 'GT', 'LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET', 'COMMA',
+    'SEMICOLON', 'COLON', 'INTERVAL', 'PERIOD', 'NUMBER', 'IDENT', 'ASSIGN'
+)
 
 reserved = {
     'begin': 'BEGIN',
@@ -29,7 +34,22 @@ reserved = {
 
 t_PLUS = r'\+'
 t_MINUS = '-'
-・・・
+t_MULT = r'\*'
+t_EQ = '='
+t_NEQ = '<>'
+t_LE = '<='
+t_LT = '<'
+t_GE = '>='
+t_GT = '>'
+t_LPAREN = r'\('
+t_RPAREN = r'\)'
+t_LBRACKET = '{'
+t_RBRACKET = '}'
+t_COMMA = ','
+t_SEMICOLON = ';'
+t_COLON = ':'
+t_INTERVAL = '..'
+t_PERIOD = '.'
 t_ASSIGN = ':='
 
 t_ignore_COMMENT = r'\#.*'
