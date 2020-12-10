@@ -220,11 +220,17 @@ def p_while_statement(p):
 
 def p_for_statement(p):
     '''
-    for_statement : FOR IDENT ASSIGN expression TO expression DO statement
+    for_statement : FOR IDENT ASSIGN expression for_action_1 TO expression DO statement
     '''
 
-    res = symbols.lookup(p[1])
-    print('LOOKUP', res)
+
+def p_for_action_1(p):
+    '''
+    for_action_1 : 
+    '''
+
+    res = symbols.lookup(p[-3])
+    print('LOOKUP for', res)
 
 
 def p_proc_call_statement(p):
