@@ -3,3 +3,5 @@ ex3_env
 test_codes
 
 __pycache__
+
+.DS_Store
