@@ -11,7 +11,7 @@ class Scope(Enum):
 
 class SymbolTable(object):
     def __init__(self):
-        # self.symbols を初期化
+        # symbols = [[var_name, var_address, var_type]]
         self.symbols = []
         self.is_func = False
 
