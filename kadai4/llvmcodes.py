@@ -92,7 +92,7 @@ class LLVMCodeAdd(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return "{} = add nsw i32 {} {}".format(self.retval, self.arg1, self.arg2)
+        return "{} = add nsw i32 {}, {}".format(self.retval, self.arg1, self.arg2)
 
 
 class LLVMCodeSub(LLVMCode):
@@ -103,7 +103,7 @@ class LLVMCodeSub(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return "{} = sub nsw i32 {} {}".format(self.retval, self.arg1, self.arg2)
+        return "{} = sub nsw i32 {}, {}".format(self.retval, self.arg1, self.arg2)
 
 
 class LLVMCodeMul(LLVMCode):
@@ -114,7 +114,7 @@ class LLVMCodeMul(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return "{} = mul nsw i32 {} {}".format(self.retval, self.arg1, self.arg2)
+        return "{} = mul nsw i32 {}, {}".format(self.retval, self.arg1, self.arg2)
 
 
 class LLVMCodeSdiv(LLVMCode):
@@ -125,7 +125,7 @@ class LLVMCodeSdiv(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return "{} = sdiv nsw i32 {} {}".format(self.retval, self.arg1, self.arg2)
+        return "{} = sdiv nsw i32 {}, {}".format(self.retval, self.arg1, self.arg2)
 
 
 class LLVMCodeRet(LLVMCode):
