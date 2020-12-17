@@ -38,7 +38,7 @@ class LLVMCodeGlobal(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return str(self.retval) + " = common i32 0, align 4"
+        return str(self.retval) + " = common global i32 0, align 4"
 
 
 class LLVMCodeLoad(LLVMCode):
