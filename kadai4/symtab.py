@@ -7,6 +7,7 @@ class Scope(Enum):
     LOCAL = 0
     GLOBAL = 1
     FUNC = 2
+    CONSTANT = 3
 
 
 class SymbolTable(object):
