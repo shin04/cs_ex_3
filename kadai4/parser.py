@@ -435,21 +435,18 @@ def p_id_list(p):
 
     scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
     if p[1] == None:
-        res = symbols.insert(p[3], scope)
-
-        scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-        retval = Factor(scope, p[3])
-        l = llvmcodes.LLVMCodeGlobal(retval)
-        codelist.append(l)
-        factorstack.append(retval)
+        index = 3
     else:
-        res = symbols.insert(p[1], scope)
+        index = 1
 
-        scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-        retval = Factor(scope, p[1])
-        l = llvmcodes.LLVMCodeGlobal(retval)
-        codelist.append(l)
-        factorstack.append(retval)
+    res = symbols.insert(p[index], scope)
+
+    scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
+    retval = Factor(scope, p[index])
+    l = llvmcodes.LLVMCodeGlobal(retval)
+    codelist.append(l)
+    factorstack.append(retval)
+
     print('INSERT', res)
 
 

@@ -14,6 +14,7 @@ symbols = SymbolTable()
 factorstack = []
 functions = []
 codelist = []
+labels = []
 
 # トークン定義
 tokens = (
@@ -104,6 +105,10 @@ def p_program(p):
     program : PROGRAM IDENT SEMICOLON outblock PERIOD
     '''
 
+    # for f in functions:
+    #     for c in f.codes:
+    #         print(c)
+
     # 中間コードのファイル書き出し
     with open("result.ll", "w") as fout:
         for f in functions:
@@ -171,6 +176,7 @@ def p_proc_name(p):
     symbols.is_func = True
     print('INSERT', res)
 
+    func = Fundecl(p[1])
     functions.append(p[1])
 
 
@@ -191,7 +197,7 @@ def p_statement(p):
     '''
     statement : assignment_statement
               | if_statement
-              | while_statement
+              | statement_action_1 while_statement
               | for_statement
               | proc_call_statement
               | null_statement
@@ -199,6 +205,27 @@ def p_statement(p):
               | read_statement
               | write_statement
     '''
+
+
+def p_statement_action_1(p):
+    '''
+    statement_action_1 : 
+    '''
+
+    new_label1 = len(labels)+1
+    new_label2 = new_label1+1
+    new_label3 = new_label2+1
+    labels.append(new_label1)
+    labels.append(new_label2)
+    labels.append(new_label3)
+
+    # label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+    l = llvmcodes.LLVMCodeBrUncond(new_label1)
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(new_label1)
+    codelist.append(l)
 
 
 def p_assignment_statement(p):
@@ -230,8 +257,40 @@ def p_else_statement(p):
 
 def p_while_statement(p):
     '''
-    while_statement : WHILE condition DO statement
+    while_statement : WHILE condition while_action_2 DO while_action_1 statement
     '''
+
+    label = labels[-1]
+
+    l = llvmcodes.LLVMCodeBrUncond(label)
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(label)
+    codelist.append(l)
+
+
+def p_while_action_1(p):
+    '''
+    while_action_1 :
+    '''
+
+    symbols.is_block = True
+
+
+def p_while_action_2(p):
+    '''
+    while_action_2 :
+    '''
+
+    next_labels = labels[len(labels)-2:]
+    # l = llvmcodes.LLVMCodeBrUncond(label)
+    # retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    retval = factorstack.pop()
+    l = llvmcodes.LLVMCodeBrCond(retval, next_labels[0], next_labels[1])
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(next_labels[0])
+    codelist.append(l)
 
 
 def p_for_statement(p):
@@ -270,22 +329,25 @@ def p_block_statement(p):
     block_statement : BEGIN begin_action_1 statement_list END
     '''
 
-    global codelist, factorstack
+    if symbols.is_block:
+        symbols.is_block = False
+    else:
+        global codelist, factorstack
 
-    # 手続きの終了
-    if symbols.is_func:
-        symbols.is_func = False
-        res = symbols.delete()
-        print('DELETE', res)
+        # 手続きの終了
+        if symbols.is_func:
+            symbols.is_func = False
+            res = symbols.delete()
+            print('DELETE', res)
 
-    # return文
-    l = llvmcodes.LLVMCodeRet()
-    codelist.append(l)
+        # return文
+        l = llvmcodes.LLVMCodeRet()
+        codelist.append(l)
 
-    # コードリストのリセット
-    functions[-1].codes = codelist
-    codelist = []
-    factorstack = []
+        # コードリストのリセット
+        functions[-1].codes = codelist
+        codelist = []
+        factorstack = []
 
 
 def p_begin_action_1(p):
@@ -293,24 +355,25 @@ def p_begin_action_1(p):
     begin_action_1 :
     '''
 
-    # 初めて手続きに入ったならコードリストのリセット
-    if len(functions) == 1:
-        global codelist, factorstack
-        functions[-1].codes = codelist
-        codelist = []
-        factorstack = []
+    if not symbols.is_block:
+        # 初めて手続きに入ったならコードリストのリセット
+        if len(functions) == 1:
+            global codelist, factorstack
+            functions[-1].codes = codelist
+            codelist = []
+            factorstack = []
 
-    # main関数かどうか判定
-    isin_main = False
-    for function in functions:
-        if function.name == 'main':
-            isin_main = True
-            break
-    if symbols.is_func == False and not isin_main:
-        # main関数をpush
-        main_func = Fundecl('main')
-        main_func.rettype = 'i32'
-        functions.append(main_func)
+        # main関数かどうか判定
+        isin_main = False
+        for function in functions:
+            if function.name == 'main':
+                isin_main = True
+                break
+        if not symbols.is_func and not isin_main:
+            # main関数をpush
+            main_func = Fundecl('main')
+            main_func.rettype = 'i32'
+            functions.append(main_func)
 
 
 def p_read_statemtnt(p):
@@ -344,6 +407,15 @@ def p_condition(p):
               | expression GT expression
     '''
 
+    if p[2] == '>':
+        cmptype = llvmcodes.CmpType.SGT
+        arg1 = factorstack.pop()
+        arg2 = factorstack.pop()
+        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        l = llvmcodes.LLVMCodeIcmp(cmptype, arg1, arg2, retval)
+        codelist.append(l)
+        factorstack.append(retval)
+
 
 def p_expression(p):
     '''
@@ -369,6 +441,13 @@ def p_expression(p):
             l = llvmcodes.LLVMCodeSub(arg1, arg2, retval)  # 命令を生成
         codelist.append(l)  # 命令列の末尾に追加
         factorstack.append(retval)  # 加算の結果をスタックにプッシュ
+    # elif len(p) == 2:
+    #     # 右辺が1この場合
+    #     arg2 = factorstack.pop()
+    #     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    #     l = llvmcodes.LLVMCodeLoad(retval, arg2)
+    #     codelist.append(l)
+    #     factorstack.append(retval)
 
 
 def p_term(p):
@@ -413,7 +492,6 @@ def p_var_name(p):
     print('LOOKUP', res)
 
     arg2 = Factor(vtype=res[2], vname=res[0])  # 命令の第2引数
-    # arg1 = factorstack.pop()  # 命令の第1引数
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
     l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
     codelist.append(l)  # 命令列の末尾に追加
@@ -435,21 +513,18 @@ def p_id_list(p):
 
     scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
     if p[1] == None:
-        res = symbols.insert(p[3], scope)
-
-        scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-        retval = Factor(scope, p[3])
-        l = llvmcodes.LLVMCodeGlobal(retval)
-        codelist.append(l)
-        factorstack.append(retval)
+        index = 3
     else:
-        res = symbols.insert(p[1], scope)
+        index = 1
 
-        scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-        retval = Factor(scope, p[1])
-        l = llvmcodes.LLVMCodeGlobal(retval)
-        codelist.append(l)
-        factorstack.append(retval)
+    res = symbols.insert(p[index], scope)
+
+    scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
+    retval = Factor(scope, p[index])
+    l = llvmcodes.LLVMCodeGlobal(retval)
+    codelist.append(l)
+    factorstack.append(retval)
+
     print('INSERT', res)
 
 

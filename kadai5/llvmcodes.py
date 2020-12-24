@@ -12,8 +12,8 @@ class CmpType(Enum):
     SLE = 5  # sle (<=，符号付き)
 
     def get_str(ctype):
-        tab = {EQUAL: "eq", NE: "ne", SGT: "sgt", SGE: "sge", SLT: "slt", SLE: "sle"}
-        return tab[ctype]
+        tab = {0: "eq", 1: "ne", 2: "sgt", 3: "sge", 4: "slt", 5: "sle"}
+        return tab[ctype.value]
 
 
 class LLVMCode(object):
@@ -68,6 +68,19 @@ class LLVMCodeBrUncond(LLVMCode):
 
     def __str__(self):
         return "br label {}".format(str(self.arg1))
+
+
+class LLVMCodeBrCond(LLVMCode):
+    def __init__(self, arg1, arg2, arg3):
+        super().__init__()
+        self.arg1 = arg1
+        self.arg2 = arg2
+        self.arg3 = arg3
+
+    def __str__(self):
+        return "br i1 {}, label {}, label {}".format(
+            str(self.arg1), str(self.arg2), str(self.arg3)
+        )
 
 
 class LLVMCodeIcmp(LLVMCode):
@@ -134,3 +147,12 @@ class LLVMCodeRet(LLVMCode):
 
     def __str__(self):
         return "ret i32 0"
+
+
+class LLVMCodeLabel(LLVMCode):
+    def __init__(self, arg1):
+        super().__init__()
+        self.arg1 = arg1
+
+    def __str__(self):
+        return '{}:'.format(self.arg1)
