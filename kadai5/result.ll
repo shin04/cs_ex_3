@@ -6,7 +6,7 @@ define i32 @main(){
   br label %1
   1:
   %2 = load i32, i32* @n, align 4
-  %3 = icmp sgt i32 0, %2
+  %3 = icmp sgt i32 %2, 0
   br i1 %3, label %4, label %10
   4:
   %5 = load i32, i32* @sum, align 4

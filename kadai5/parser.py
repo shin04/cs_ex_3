@@ -412,8 +412,8 @@ def p_condition(p):
 
     if p[2] == '>':
         cmptype = llvmcodes.CmpType.SGT
-        arg1 = factorstack.pop()
         arg2 = factorstack.pop()
+        arg1 = factorstack.pop()
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
         l = llvmcodes.LLVMCodeIcmp(cmptype, arg1, arg2, retval)
         codelist.append(l)
