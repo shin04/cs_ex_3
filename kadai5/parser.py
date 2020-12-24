@@ -15,6 +15,7 @@ factorstack = []
 functions = []
 codelist = []
 labels = []
+while_undifined_label = -1
 
 # トークン定義
 tokens = (
@@ -212,19 +213,12 @@ def p_statement_action_1(p):
     statement_action_1 : 
     '''
 
-    new_label1 = len(labels)+1
-    new_label2 = new_label1+1
-    new_label3 = new_label2+1
-    labels.append(new_label1)
-    labels.append(new_label2)
-    labels.append(new_label3)
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    # label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
-
-    l = llvmcodes.LLVMCodeBrUncond(new_label1)
+    l = llvmcodes.LLVMCodeBrUncond(label_val)
     codelist.append(l)
 
-    l = llvmcodes.LLVMCodeLabel(new_label1)
+    l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
 
 
@@ -260,12 +254,20 @@ def p_while_statement(p):
     while_statement : WHILE condition while_action_2 DO while_action_1 statement
     '''
 
-    label = labels[-1]
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    l = llvmcodes.LLVMCodeBrUncond(label)
+    if while_undifined_label != -1:
+        l = codelist[while_undifined_label]
+        arg1 = l.arg1
+        arg2 = l.arg2
+        arg3 = label_val
+
+        codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+
+    l = llvmcodes.LLVMCodeBrUncond(label_val)
     codelist.append(l)
 
-    l = llvmcodes.LLVMCodeLabel(label)
+    l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
 
 
@@ -282,14 +284,15 @@ def p_while_action_2(p):
     while_action_2 :
     '''
 
-    next_labels = labels[len(labels)-2:]
-    # l = llvmcodes.LLVMCodeBrUncond(label)
-    # retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
     retval = factorstack.pop()
-    l = llvmcodes.LLVMCodeBrCond(retval, next_labels[0], next_labels[1])
+    l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    l = llvmcodes.LLVMCodeLabel(next_labels[0])
+    global while_undifined_label
+    while_undifined_label = len(codelist)-1
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
 
 
@@ -441,13 +444,6 @@ def p_expression(p):
             l = llvmcodes.LLVMCodeSub(arg1, arg2, retval)  # 命令を生成
         codelist.append(l)  # 命令列の末尾に追加
         factorstack.append(retval)  # 加算の結果をスタックにプッシュ
-    # elif len(p) == 2:
-    #     # 右辺が1この場合
-    #     arg2 = factorstack.pop()
-    #     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-    #     l = llvmcodes.LLVMCodeLoad(retval, arg2)
-    #     codelist.append(l)
-    #     factorstack.append(retval)
 
 
 def p_term(p):

@@ -152,7 +152,7 @@ class LLVMCodeRet(LLVMCode):
 class LLVMCodeLabel(LLVMCode):
     def __init__(self, arg1):
         super().__init__()
-        self.arg1 = arg1
+        self.arg1 = arg1.val
 
     def __str__(self):
         return '{}:'.format(self.arg1)
