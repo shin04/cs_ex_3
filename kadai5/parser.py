@@ -16,6 +16,7 @@ functions = []
 codelist = []
 labels = []
 while_undifined_label = -1
+while_first_label = -1
 
 # トークン定義
 tokens = (
@@ -215,6 +216,9 @@ def p_statement_action_1(p):
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
+    global while_first_label
+    while_first_label = label_val
+
     l = llvmcodes.LLVMCodeBrUncond(label_val)
     codelist.append(l)
 
@@ -261,10 +265,9 @@ def p_while_statement(p):
         arg1 = l.arg1
         arg2 = l.arg2
         arg3 = label_val
-
         codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
-    l = llvmcodes.LLVMCodeBrUncond(label_val)
+    l = llvmcodes.LLVMCodeBrUncond(while_first_label)
     codelist.append(l)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
