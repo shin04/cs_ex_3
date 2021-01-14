@@ -183,7 +183,7 @@ def p_proc_name(p):
     print('INSERT', res)
 
     func = Fundecl(p[1])
-    functions.append(p[1])
+    functions.append(func)
 
 
 def p_inblock(p):
@@ -477,6 +477,14 @@ def p_condition(p):
         cmptype = llvmcodes.CmpType.SGT
     elif p[2] == '<':
         cmptype = llvmcodes.CmpType.SLT
+    elif p[2] == '=':
+        cmptype = llvmcodes.CmpType.EQUAL
+    elif p[2] == '<>':
+        cmptype = llvmcodes.CmpType.NE
+    elif p[2] == '>=':
+        cmptype = llvmcodes.CmpType.SGE
+    elif p[2] == '<=':
+        cmptype = llvmcodes.CmpType.SLE
     arg2 = factorstack.pop()
     arg1 = factorstack.pop()
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
@@ -522,6 +530,7 @@ def p_term(p):
         arg2 = factorstack.pop()
         arg1 = factorstack.pop()
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        l = 'no code'
         if p[2] == "*":
             l = llvmcodes.LLVMCodeMul(arg1, arg2, retval)
         elif p[2] == "/":
