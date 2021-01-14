@@ -242,8 +242,40 @@ def p_assignment_statement(p):
 
 def p_if_statement(p):
     '''
-    if_statement : IF condition THEN statement else_statement
+    if_statement : IF condition if_action_1 THEN statement else_statement
     '''
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+    if while_undifined_label != -1:
+        l = codelist[while_undifined_label]
+        arg1 = l.arg1
+        arg2 = l.arg2
+        arg3 = label_val
+        codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+
+    l = llvmcodes.LLVMCodeBrUncond(label_val)
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
+
+
+def p_if_action_1(p):
+    '''
+    if_action_1 :
+    '''
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    retval = factorstack.pop()
+    l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
+    codelist.append(l)
+
+    global while_undifined_label
+    while_undifined_label = len(codelist)-1
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
 
 
 def p_else_statement(p):
