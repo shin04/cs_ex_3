@@ -189,6 +189,7 @@ def p_proc_name(p):
     print('INSERT', res)
 
     func = Fundecl(p[1])
+    # func.rettype = 'i32'
     functions.append(func)
 
 
@@ -395,6 +396,10 @@ def p_proc_call_name(p):
     # symbols.is_func = True
     print('LOOKUP', res)
 
+    func_name = res[0]
+    l = llvmcodes.LLVMCodeProcCall('void', func_name)
+    codelist.append(l)
+
 
 def p_block_statement(p):
     '''
@@ -413,7 +418,9 @@ def p_block_statement(p):
             print('DELETE', res)
 
         # return文
-        l = llvmcodes.LLVMCodeRet()
+        func = functions[-1]
+        rtype = func.rettype
+        l = llvmcodes.LLVMCodeRet(rtype)
         codelist.append(l)
 
         # コードリストのリセット
@@ -427,7 +434,6 @@ def p_begin_action_1(p):
     begin_action_1 :
     '''
 
-    print(functions)
     if not symbols.is_block:
         # 初めて手続きに入ったならコードリストのリセット
         if len(functions) == 1:

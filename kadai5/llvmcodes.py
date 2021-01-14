@@ -142,11 +142,15 @@ class LLVMCodeSdiv(LLVMCode):
 
 
 class LLVMCodeRet(LLVMCode):
-    def __init__(self):
+    def __init__(self, rtype='i32'):
         super().__init__()
+        self.rtype = rtype
 
     def __str__(self):
-        return "ret i32 0"
+        if self.rtype == 'void':
+            return "ret {}".format(self.rtype)
+        else:
+            return "ret {} 0".format(self.rtype)
 
 
 class LLVMCodeLabel(LLVMCode):
@@ -156,3 +160,13 @@ class LLVMCodeLabel(LLVMCode):
 
     def __str__(self):
         return '{}:'.format(self.arg1)
+
+
+class LLVMCodeProcCall(LLVMCode):
+    def __init__(self, rtype, name):
+        super().__init__()
+        self.rtype = rtype
+        self.name = name
+
+    def __str__(self):
+        return 'call {} @{}()'.format(self.rtype, self.name)
