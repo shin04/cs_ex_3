@@ -178,6 +178,12 @@ def p_proc_name(p):
     proc_name : IDENT
     '''
 
+    # 手続き宣言時にコードリストのリセット
+    global codelist, factorstack
+    functions[-1].codes = codelist
+    codelist = []
+    factorstack = []
+
     res = symbols.insert(p[1], Scope.FUNC)
     symbols.is_func = True
     print('INSERT', res)
@@ -421,6 +427,7 @@ def p_begin_action_1(p):
     begin_action_1 :
     '''
 
+    print(functions)
     if not symbols.is_block:
         # 初めて手続きに入ったならコードリストのリセット
         if len(functions) == 1:
