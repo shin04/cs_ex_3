@@ -15,8 +15,12 @@ factorstack = []
 functions = []
 codelist = []
 labels = []
+
 while_undifined_label = -1
 while_first_label = -1
+
+if_undifined_label = -1
+if_first_label = -1
 
 # トークン定義
 tokens = (
@@ -242,23 +246,8 @@ def p_assignment_statement(p):
 
 def p_if_statement(p):
     '''
-    if_statement : IF condition if_action_1 THEN statement else_statement
+    if_statement : IF condition if_action_1 THEN statement if_action_2 else_statement
     '''
-
-    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
-
-    if while_undifined_label != -1:
-        l = codelist[while_undifined_label]
-        arg1 = l.arg1
-        arg2 = l.arg2
-        arg3 = label_val
-        codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
-
-    l = llvmcodes.LLVMCodeBrUncond(label_val)
-    codelist.append(l)
-
-    l = llvmcodes.LLVMCodeLabel(label_val)
-    codelist.append(l)
 
 
 def p_if_action_1(p):
@@ -271,8 +260,29 @@ def p_if_action_1(p):
     l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    global while_undifined_label
-    while_undifined_label = len(codelist)-1
+    global if_undifined_label
+    if_undifined_label = len(codelist)-1
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
+
+
+def p_if_action_2(p):
+    '''
+    if_action_2 :
+    '''
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+    if if_undifined_label != -1:
+        l = codelist[if_undifined_label]
+        arg1 = l.arg1
+        arg2 = l.arg2
+        arg3 = label_val
+        codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+
+    l = llvmcodes.LLVMCodeBrUncond(label_val)
+    codelist.append(l)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
@@ -280,9 +290,27 @@ def p_if_action_1(p):
 
 def p_else_statement(p):
     '''
-    else_statement : ELSE statement
+    else_statement : ELSE else_action_1 statement
                    |
     '''
+
+    if (len(p) > 1):
+        # elseがある
+        label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+        l = llvmcodes.LLVMCodeBrUncond(label_val)
+        codelist.append(l)
+
+        l = llvmcodes.LLVMCodeLabel(label_val)
+        codelist.append(l)
+
+
+def p_else_action_1(p):
+    '''
+    else_action_1 :
+    '''
+
+    symbols.is_block = True
 
 
 def p_while_statement(p):
@@ -447,12 +475,14 @@ def p_condition(p):
 
     if p[2] == '>':
         cmptype = llvmcodes.CmpType.SGT
-        arg2 = factorstack.pop()
-        arg1 = factorstack.pop()
-        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-        l = llvmcodes.LLVMCodeIcmp(cmptype, arg1, arg2, retval)
-        codelist.append(l)
-        factorstack.append(retval)
+    elif p[2] == '<':
+        cmptype = llvmcodes.CmpType.SLT
+    arg2 = factorstack.pop()
+    arg1 = factorstack.pop()
+    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    l = llvmcodes.LLVMCodeIcmp(cmptype, arg1, arg2, retval)
+    codelist.append(l)
+    factorstack.append(retval)
 
 
 def p_expression(p):
