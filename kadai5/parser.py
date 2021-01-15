@@ -19,6 +19,10 @@ labels = []
 while_undifined_label = -1
 while_first_label = -1
 
+for_undifined_label = -1
+for_first_label = -1
+for_cond_var = Factor(Scope.LOCAL)
+
 if_undifined_label = -1
 if_first_label = -1
 
@@ -246,7 +250,7 @@ def p_assignment_statement(p):
     print('LOOKUP', res)
 
     arg1 = factorstack.pop()  # 命令の第1引数
-    arg2 = Factor(vtype=res[2], vname=res[0])  # 命令の第2引数
+    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
     l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
     codelist.append(l)  # 命令列の末尾に追加
 
@@ -368,8 +372,51 @@ def p_while_action_2(p):
 
 def p_for_statement(p):
     '''
-    for_statement : FOR IDENT ASSIGN expression for_action_1 TO expression DO statement
+    for_statement : FOR IDENT ASSIGN expression for_action_1 TO expression for_action_3 DO for_action_2 statement
     '''
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    l = llvmcodes.LLVMCodeBrUncond(label_val)
+    codelist.append(l)
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
+
+    res = symbols.lookup(p[2])
+    arg1 = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
+    l = llvmcodes.LLVMCodeLoad(arg1, arg2)
+    codelist.append(l)
+    factorstack.append(arg2)
+    factorstack.append(arg1)
+
+    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    arg1 = factorstack.pop()
+    arg2 = Factor(Scope.CONSTANT, val=1)
+    l = llvmcodes.LLVMCodeAdd(arg1, arg2, retval)
+    codelist.append(l)
+    factorstack.append(retval)
+
+    arg1 = factorstack.pop()
+    arg2 = factorstack.pop()
+    l = llvmcodes.LLVMCodeStore(arg1, arg2)
+    codelist.append(l)
+
+    # ----------
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+    if for_undifined_label != -1:
+        l = codelist[for_undifined_label]
+        arg1 = l.arg1
+        arg2 = l.arg2
+        arg3 = label_val
+        codelist[for_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+
+    l = llvmcodes.LLVMCodeBrUncond(for_first_label)
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
 
 
 def p_for_action_1(p):
@@ -379,6 +426,64 @@ def p_for_action_1(p):
 
     res = symbols.lookup(p[-3])
     print('LOOKUP for', res)
+
+    arg1 = factorstack.pop()
+    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
+
+    l = llvmcodes.LLVMCodeStore(arg1, arg2)
+    codelist.append(l)
+
+    factorstack.append(arg2)
+
+
+def p_for_action_2(p):
+    '''
+    for_action_2 :
+    '''
+
+    symbols.is_block = True
+
+
+def p_for_action_3(p):
+    '''
+    for_action_3 :
+    '''
+
+    global for_undifined_label, for_first_label
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    l_br = llvmcodes.LLVMCodeBrUncond(label_val)
+    codelist.append(l_br)
+
+    for_first_label = label_val
+
+    l_label = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l_label)
+
+    arg1 = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    l_icmp_arg2 = factorstack.pop()  # 次のicmp用の引数
+    arg2 = factorstack.pop()
+    l_load = llvmcodes.LLVMCodeLoad(arg1, arg2)
+    codelist.append(l_load)
+    factorstack.append(arg1)
+
+    cmptype = llvmcodes.CmpType.SLT
+    arg1 = factorstack.pop()
+    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    l_icmp = llvmcodes.LLVMCodeIcmp(cmptype, arg1, l_icmp_arg2, retval)
+    codelist.append(l_icmp)
+
+    factorstack.append(retval)
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    retval = factorstack.pop()
+    l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
+    codelist.append(l)
+
+    for_undifined_label = len(codelist)-1
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
 
 
 def p_proc_call_statement(p):
@@ -406,16 +511,8 @@ def p_block_statement(p):
     block_statement : BEGIN begin_action_1 statement_list END
     '''
 
-    if symbols.is_block:
-        symbols.is_block = False
-    else:
-        global codelist, factorstack
-
-        # 手続きの終了
-        if symbols.is_func:
-            symbols.is_func = False
-            res = symbols.delete()
-            print('DELETE', res)
+    def end_proc():
+        global factorstack, codelist
 
         # return文
         func = functions[-1]
@@ -427,6 +524,19 @@ def p_block_statement(p):
         functions[-1].codes = codelist
         codelist = []
         factorstack = []
+
+    if symbols.is_block:
+        symbols.is_block = False
+        # 手続きの終了
+        if symbols.is_func:
+            symbols.is_func = False
+            res = symbols.delete()
+            print('DELETE', res)
+
+            end_proc()
+
+    else:
+        end_proc()
 
 
 def p_begin_action_1(p):
@@ -543,10 +653,10 @@ def p_term(p):
         arg2 = factorstack.pop()
         arg1 = factorstack.pop()
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-        l = 'no code'
+        # l = 'no code'
         if p[2] == "*":
             l = llvmcodes.LLVMCodeMul(arg1, arg2, retval)
-        elif p[2] == "/":
+        elif p[2] == "div":
             l = llvmcodes.LLVMCodeSdiv(arg1, arg2, retval)
         codelist.append(l)
         factorstack.append(retval)
@@ -574,7 +684,7 @@ def p_var_name(p):
     res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
-    arg2 = Factor(vtype=res[2], vname=res[0])  # 命令の第2引数
+    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
     l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
     codelist.append(l)  # 命令列の末尾に追加
@@ -594,20 +704,30 @@ def p_id_list(p):
             | id_list COMMA IDENT
     '''
 
+    var_name = ''
+    var_address = 0
     scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
+
     if p[1] == None:
         index = 3
     else:
         index = 1
 
-    res = symbols.insert(p[index], scope)
+    var_name = p[index]
 
-    scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-    retval = Factor(scope, p[index])
-    l = llvmcodes.LLVMCodeGlobal(retval)
-    codelist.append(l)
-    factorstack.append(retval)
+    if symbols.is_func:
+        var_address = functions[-1].get_register()
+        retval = Factor(Scope.LOCAL, val=var_address)
+        l = llvmcodes.LLVMCodeAlloca(retval)
+        codelist.append(l)
+        factorstack.append(retval)
+    else:
+        retval = Factor(Scope.GLOBAL, var_name)
+        l = llvmcodes.LLVMCodeGlobal(retval)
+        codelist.append(l)
+        factorstack.append(retval)
 
+    res = symbols.insert(var_name, scope, var_address)
     print('INSERT', res)
 
 

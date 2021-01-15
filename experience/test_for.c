@@ -1,13 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int sum;
+int sum, i;
 
 int main()
 {
     sum = 0;
 
-    for (int i = 1; i < 11; i++)
+    for (i = 1; i < 11; i++)
     {
         sum += i;
     }

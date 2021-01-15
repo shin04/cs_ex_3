@@ -4,34 +4,34 @@ target datalayout = "e-m:o-p270:32:32-p271:32:32-p272:64:64-i64:64-f80:128-n8:16
 target triple = "x86_64-apple-macosx10.15.0"
 
 @sum = common global i32 0, align 4
+@i = common global i32 0, align 4
 ; Function Attrs: noinline nounwind optnone ssp uwtable
 define i32 @main() #0 {
   %1 = alloca i32, align 4
-  %2 = alloca i32, align 4
   store i32 0, i32* %1, align 4
   store i32 0, i32* @sum, align 4
-  store i32 1, i32* %2, align 4
-  br label %3
+  store i32 1, i32* @i, align 4
+  br label %2
 
-3:                                                ; preds = %10, %0
-  %4 = load i32, i32* %2, align 4
-  %5 = icmp slt i32 %4, 11
-  br i1 %5, label %6, label %13
+2:                                                ; preds = %9, %0
+  %3 = load i32, i32* @i, align 4
+  %4 = icmp slt i32 %3, 11
+  br i1 %4, label %5, label %12
 
-6:                                                ; preds = %3
-  %7 = load i32, i32* %2, align 4
-  %8 = load i32, i32* @sum, align 4
-  %9 = add nsw i32 %8, %7
-  store i32 %9, i32* @sum, align 4
-  br label %10
+5:                                                ; preds = %2
+  %6 = load i32, i32* @i, align 4
+  %7 = load i32, i32* @sum, align 4
+  %8 = add nsw i32 %7, %6
+  store i32 %8, i32* @sum, align 4
+  br label %9
 
-10:                                               ; preds = %6
-  %11 = load i32, i32* %2, align 4
-  %12 = add nsw i32 %11, 1
-  store i32 %12, i32* %2, align 4
-  br label %3
+9:                                                ; preds = %5
+  %10 = load i32, i32* @i, align 4
+  %11 = add nsw i32 %10, 1
+  store i32 %11, i32* @i, align 4
+  br label %2
 
-13:                                               ; preds = %3
+12:                                               ; preds = %2
   ret i32 0
 }
 

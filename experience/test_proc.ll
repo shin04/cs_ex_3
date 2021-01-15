@@ -6,7 +6,10 @@ target triple = "x86_64-apple-macosx10.15.0"
 @a = common global i32 0, align 4
 ; Function Attrs: noinline nounwind optnone ssp uwtable
 define void @proc() #0 {
-  store i32 10, i32* @a, align 4
+  %1 = alloca i32, align 4
+  store i32 10, i32* %1, align 4
+  %2 = load i32, i32* %1, align 4
+  store i32 %2, i32* @a, align 4
   ret void
 }
 ; Function Attrs: noinline nounwind optnone ssp uwtable

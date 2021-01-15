@@ -17,8 +17,8 @@ class SymbolTable(object):
         self.is_func = False
         self.is_block = False
 
-    def insert(self, token: str, token_type: Scope) -> list:
-        symbol = [token, 0, token_type]
+    def insert(self, token: str, token_type: Scope, address=0) -> list:
+        symbol = [token, address, token_type]
         self.symbols.append(symbol)
 
         return self.symbols

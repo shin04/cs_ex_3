@@ -5,7 +5,9 @@ int a;
 
 void proc()
 {
-    a = 10;
+    int b;
+    b = 10;
+    a = b;
 }
 
 int main()
