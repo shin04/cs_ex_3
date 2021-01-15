@@ -573,11 +573,30 @@ def p_read_statemtnt(p):
     res = symbols.lookup(p[3])
     print('LOOKUP', res)
 
+    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    proc_type = 'i32'
+    proc = 'scanf'
+    var_type = 'i32*'
+    var = Factor(res[2], res[0], res[1])
+    l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
+    codelist.append(l)
+
+    l = '''@.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1'''
+    functions[0].codes.insert(0, l)
+
 
 def p_write_statemtnt(p):
     '''
     write_statement : WRITE LPAREN expression RPAREN
     '''
+
+    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    proc_type = 'i32'
+    proc = 'printf'
+    var_type = 'i32'
+    var = factorstack.pop()
+    l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
+    codelist.append(l)
 
 
 def p_null_statement(p):
