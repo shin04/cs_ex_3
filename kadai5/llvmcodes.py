@@ -138,7 +138,7 @@ class LLVMCodeSdiv(LLVMCode):
         self.retval = retval
 
     def __str__(self):
-        return "{} = sdiv nsw i32 {}, {}".format(self.retval, self.arg1, self.arg2)
+        return "{} = sdiv i32 {}, {}".format(self.retval, self.arg1, self.arg2)
 
 
 class LLVMCodeRet(LLVMCode):
