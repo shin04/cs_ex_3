@@ -581,8 +581,10 @@ def p_read_statemtnt(p):
     l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
     codelist.append(l)
 
-    l = '''@.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1'''
+    l = '@.str = private unnamed_addr constant [3 x i8] c\"%d\\00\", align 1'
     functions[0].codes.insert(0, l)
+
+    functions[-1].use_read = llvmcodes.LLVMCodeDeclare(proc_type, proc)
 
 
 def p_write_statemtnt(p):
@@ -597,6 +599,8 @@ def p_write_statemtnt(p):
     var = factorstack.pop()
     l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
     codelist.append(l)
+
+    functions[-1].use_write = llvmcodes.LLVMCodeDeclare(proc_type, proc)
 
 
 def p_null_statement(p):

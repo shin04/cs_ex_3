@@ -11,6 +11,8 @@ class Fundecl(object):
         self.codes = []
         self.cntr = 1
         self.rettype = "void"
+        self.use_read = ""
+        self.use_write = ""
 
     def get_register(self):
         t = self.cntr
@@ -23,6 +25,11 @@ class Fundecl(object):
             for l in self.codes:
                 print("  {}".format(l), file=fp)
             print("}", file=fp)
+
+            if self.use_read != "":
+                print(self.use_read, file=fp)
+            if self.use_write != "":
+                print(self.use_write, file=fp)
         else:
             for l in self.codes:
                 print("{}".format(l), file=fp)
