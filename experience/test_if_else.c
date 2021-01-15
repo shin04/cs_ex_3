@@ -3,7 +3,7 @@
 
 int a, b;
 
-int main()
+void func()
 {
     a = 10;
     b = 1;
@@ -15,6 +15,11 @@ int main()
     {
         a--;
     }
+}
+
+int main()
+{
+    func();
 
     return 0;
 }

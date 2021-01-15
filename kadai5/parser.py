@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
 
 import ply.lex as lex
 import ply.yacc as yacc
@@ -25,6 +26,10 @@ for_cond_var = Factor(Scope.LOCAL)
 
 if_undifined_label = -1
 if_first_label = -1
+else_undifined_label = -1
+EXIST_ELSE = False
+
+RESULT_FILE_NAME = 'result.ll'
 
 # トークン定義
 tokens = (
@@ -120,7 +125,7 @@ def p_program(p):
     #         print(c)
 
     # 中間コードのファイル書き出し
-    with open("result.ll", "w") as fout:
+    with open("../results/"+RESULT_FILE_NAME+".ll", "w") as fout:
         for f in functions:
             f.print(fout)
 
@@ -226,7 +231,7 @@ def p_statement(p):
 
 def p_statement_action_1(p):
     '''
-    statement_action_1 : 
+    statement_action_1 :
     '''
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
@@ -260,6 +265,8 @@ def p_if_statement(p):
     if_statement : IF condition if_action_1 THEN statement if_action_2 else_statement
     '''
 
+    symbols.is_else_block = False
+
 
 def p_if_action_1(p):
     '''
@@ -283,20 +290,20 @@ def p_if_action_2(p):
     if_action_2 :
     '''
 
-    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+    # label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    if if_undifined_label != -1:
-        l = codelist[if_undifined_label]
-        arg1 = l.arg1
-        arg2 = l.arg2
-        arg3 = label_val
-        codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+    # if if_undifined_label != -1:
+    #     l = codelist[if_undifined_label]
+    #     arg1 = l.arg1
+    #     arg2 = l.arg2
+    #     arg3 = label_val
+    #     codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
-    l = llvmcodes.LLVMCodeBrUncond(label_val)
-    codelist.append(l)
+    # l = llvmcodes.LLVMCodeBrUncond(label_val)
+    # codelist.append(l)
 
-    l = llvmcodes.LLVMCodeLabel(label_val)
-    codelist.append(l)
+    # l = llvmcodes.LLVMCodeLabel(label_val)
+    # codelist.append(l)
 
 
 def p_else_statement(p):
@@ -308,6 +315,26 @@ def p_else_statement(p):
     if (len(p) > 1):
         # elseがある
         label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+        if else_undifined_label != -1:
+            l = codelist[else_undifined_label]
+            arg1 = label_val
+            codelist[else_undifined_label] = llvmcodes.LLVMCodeBrUncond(arg1)
+
+        l = llvmcodes.LLVMCodeBrUncond(label_val)
+        codelist.append(l)
+
+        l = llvmcodes.LLVMCodeLabel(label_val)
+        codelist.append(l)
+    else:
+        label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+        if if_undifined_label != -1:
+            l = codelist[if_undifined_label]
+            arg1 = l.arg1
+            arg2 = l.arg2
+            arg3 = label_val
+            codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
         l = llvmcodes.LLVMCodeBrUncond(label_val)
         codelist.append(l)
@@ -322,6 +349,27 @@ def p_else_action_1(p):
     '''
 
     symbols.is_block = True
+    symbols.is_else_block = True
+
+    label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
+
+    if if_undifined_label != -1:
+        l = codelist[if_undifined_label]
+        arg1 = l.arg1
+        arg2 = l.arg2
+        arg3 = label_val
+        codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+
+    if p[-1]:
+        l = llvmcodes.LLVMCodeBrUncond('undifined')
+        global else_undifined_label
+        else_undifined_label = len(codelist)
+    else:
+        l = llvmcodes.LLVMCodeBrUncond(label_val)
+    codelist.append(l)
+
+    l = llvmcodes.LLVMCodeLabel(label_val)
+    codelist.append(l)
 
 
 def p_while_statement(p):
@@ -526,9 +574,10 @@ def p_block_statement(p):
         factorstack = []
 
     if symbols.is_block:
-        symbols.is_block = False
+        if not symbols.is_else_block:
+            symbols.is_block = False
         # 手続きの終了
-        if symbols.is_func:
+        if symbols.is_func and not symbols.is_else_block:
             symbols.is_func = False
             res = symbols.delete()
             print('DELETE', res)
@@ -768,6 +817,12 @@ if __name__ == "__main__":
     #################################################################
     # メインの処理
     #################################################################
+
+    pattern = '.*/(.*).p$'
+    result = re.match(pattern, sys.argv[1])
+    RESULT_FILE_NAME = result.group(1)
+    print(RESULT_FILE_NAME)
+
     lexer = lex.lex(debug=0)  # 字句解析器
     yacc.yacc()  # 構文解析器
 
