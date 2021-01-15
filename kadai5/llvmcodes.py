@@ -181,4 +181,4 @@ class LLVMCodeOutProcCall(LLVMCode):
         self.var = var
 
     def __str__(self):
-        return '{} = call {} (i8*, ...) @{}(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), {} {}'.format(self.retval, self.proc_type, self.proc, self.var_type, self.var)
+        return '{} = call {} (i8*, ...) @{}(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), {} {})'.format(self.retval, self.proc_type, self.proc, self.var, self.var_type)
