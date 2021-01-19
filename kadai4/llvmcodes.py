@@ -33,12 +33,12 @@ class LLVMCodeAlloca(LLVMCode):
 
 class LLVMCodeGlobal(LLVMCode):
     # global variable
-    def __init__(self, retval):
+    def __init__(self, var_name):
         super().__init__()
-        self.retval = retval
+        self.var_name = var_name
 
     def __str__(self):
-        return str(self.retval) + " = common global i32 0, align 4"
+        return str(self.var_name) + " = common global i32 0, align 4"
 
 
 class LLVMCodeLoad(LLVMCode):

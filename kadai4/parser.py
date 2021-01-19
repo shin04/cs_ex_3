@@ -356,8 +356,15 @@ def p_expression(p):
 
     if len(p) == 3:
         # 右辺が2個の場合
-        if p[1] == '+':  # PLUS
-            print('hogehoge')
+        if p[1] == '+':
+            # termと同じ処理
+            pass
+        elif p[1] == '-':
+            # 符号を反転
+            fact = factorstack.pop()
+            if fact.val != None:
+                fact.val = -fact.val
+            factorstack.append(fact)
     elif len(p) == 4:
         # 右辺が3個の場合
         arg2 = factorstack.pop()  # 命令の第2引数をポップ
@@ -442,10 +449,10 @@ def p_id_list(p):
     res = symbols.insert(p[index], scope)
 
     scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
-    retval = Factor(scope, p[index])
-    l = llvmcodes.LLVMCodeGlobal(retval)
+    var_name = Factor(scope, p[index])
+    l = llvmcodes.LLVMCodeGlobal(var_name)
     codelist.append(l)
-    factorstack.append(retval)
+    factorstack.append(var_name)
 
     print('INSERT', res)
 
