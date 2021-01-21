@@ -181,7 +181,44 @@ def p_subprog_decl(p):
 def p_proc_decl(p):
     '''
     proc_decl : PROCEDURE proc_name SEMICOLON inblock
+              | PROCEDURE proc_name LPAREN args_flag id_list args_action RPAREN SEMICOLON inblock
     '''
+
+
+def p_args_flag(p):
+    '''
+    args_flag :
+    '''
+
+    symbols.is_args = True
+
+
+def p_args_action(p):
+    '''
+    args_action :
+    '''
+
+    # factorstackには引数しか入っていない（はず）
+    # factorstackの値を全て取り出して、arglistにぶち込む
+    # ついでにalloca & store
+
+    c_args = len(factorstack)
+
+    for i in range(c_args):
+        # arglistにぶっこむ
+        arg = factorstack.pop()
+        functions[-1].arglist.append(('i32', arg))
+
+        # alloca
+        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        alloca_code = llvmcodes.LLVMCodeAlloca(retval)
+        codelist.append(alloca_code)
+
+        # store
+        store_code = llvmcodes.LLVMCodeStore(arg, retval)
+        codelist.append(store_code)
+
+    symbols.is_args = False
 
 
 def p_proc_name(p):
@@ -518,7 +555,16 @@ def p_for_action_3(p):
 def p_proc_call_statement(p):
     '''
     proc_call_statement : proc_call_name
+                        | proc_call_name LPAREN arg_list RPAREN
     '''
+
+    func = factorstack.pop()
+    while True:
+        func = factorstack.pop()
+        if func.type == Scope.FUNC:
+            break
+    l = llvmcodes.LLVMCodeProcCall('void', func)
+    codelist.append(l)
 
 
 def p_proc_call_name(p):
@@ -527,12 +573,15 @@ def p_proc_call_name(p):
     '''
 
     res = symbols.lookup(p[1])
-    # symbols.is_func = True
     print('LOOKUP', res)
 
-    func_name = res[0]
-    l = llvmcodes.LLVMCodeProcCall('void', func_name)
-    codelist.append(l)
+    func_index = -1
+    for i, func in enumerate(functions):
+        if func.name == res[0]:
+            func_index = i
+
+    func = Factor(Scope.FUNC, vname=res[0], args=functions[func_index].arglist)
+    factorstack.append(func)
 
 
 def p_block_statement(p):
@@ -713,7 +762,6 @@ def p_term(p):
         arg2 = factorstack.pop()
         arg1 = factorstack.pop()
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-        # l = 'no code'
         if p[2] == "*":
             l = llvmcodes.LLVMCodeMul(arg1, arg2, retval)
         elif p[2] == "div":
@@ -746,8 +794,9 @@ def p_var_name(p):
 
     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-    l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
-    codelist.append(l)  # 命令列の末尾に追加
+    if not symbols.is_args:
+        l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
+        codelist.append(l)  # 命令列の末尾に追加
     factorstack.append(retval)  # Loadの結果をスタックにプッシュ
 
 
@@ -756,6 +805,8 @@ def p_arg_list(p):
     arg_list : expression
              | arg_list COMMA expression
     '''
+
+    # symbols.is_args = False
 
 
 def p_id_list(p):
@@ -778,8 +829,9 @@ def p_id_list(p):
     if symbols.is_func:
         var_address = functions[-1].get_register()
         retval = Factor(Scope.LOCAL, val=var_address)
-        l = llvmcodes.LLVMCodeAlloca(retval)
-        codelist.append(l)
+        if not symbols.is_args:
+            l = llvmcodes.LLVMCodeAlloca(retval)
+            codelist.append(l)
         factorstack.append(retval)
     else:
         retval = Factor(Scope.GLOBAL, var_name)

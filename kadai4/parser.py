@@ -391,7 +391,7 @@ def p_term(p):
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
         if p[2] == "*":
             l = llvmcodes.LLVMCodeMul(arg1, arg2, retval)
-        elif p[2] == "/":
+        elif p[2] == "div":
             l = llvmcodes.LLVMCodeSdiv(arg1, arg2, retval)
         codelist.append(l)
         factorstack.append(retval)

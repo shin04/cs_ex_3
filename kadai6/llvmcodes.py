@@ -169,7 +169,7 @@ class LLVMCodeProcCall(LLVMCode):
         self.name = name
 
     def __str__(self):
-        return 'call {} @{}()'.format(self.rtype, self.name)
+        return 'call {} {}'.format(self.rtype, self.name)
 
 
 class LLVMCodeOutProcCall(LLVMCode):
