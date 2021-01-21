@@ -163,13 +163,20 @@ class LLVMCodeLabel(LLVMCode):
 
 
 class LLVMCodeProcCall(LLVMCode):
-    def __init__(self, rtype, name):
+    def __init__(self, rtype, name, args=[]):
         super().__init__()
         self.rtype = rtype
         self.name = name
+        self.args = args
 
     def __str__(self):
-        return 'call {} {}'.format(self.rtype, self.name)
+        args_str = ''
+        for i, arg in enumerate(self.args):
+            if i > 0:
+                args_str += ', '
+            args_str += arg[1] + ' ' + arg[0]
+
+        return 'call {} {}({})'.format(self.rtype, self.name, args_str)
 
 
 class LLVMCodeOutProcCall(LLVMCode):

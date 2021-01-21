@@ -558,12 +558,14 @@ def p_proc_call_statement(p):
                         | proc_call_name LPAREN arg_list RPAREN
     '''
 
-    func = factorstack.pop()
+    args = []
     while True:
-        func = factorstack.pop()
-        if func.type == Scope.FUNC:
+        fact = factorstack.pop()
+        if fact.type == Scope.FUNC:
             break
-    l = llvmcodes.LLVMCodeProcCall('void', func)
+        else:
+            args.append(('%' + str(fact.val), 'i32'))
+    l = llvmcodes.LLVMCodeProcCall('void', fact, args)
     codelist.append(l)
 
 
@@ -575,12 +577,7 @@ def p_proc_call_name(p):
     res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
-    func_index = -1
-    for i, func in enumerate(functions):
-        if func.name == res[0]:
-            func_index = i
-
-    func = Factor(Scope.FUNC, vname=res[0], args=functions[func_index].arglist)
+    func = Factor(Scope.FUNC, vname=res[0])
     factorstack.append(func)
 
 

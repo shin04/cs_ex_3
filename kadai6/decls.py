@@ -44,11 +44,10 @@ class Fundecl(object):
 
 
 class Factor(object):
-    def __init__(self, vtype, vname=None, val=None, args=None):
+    def __init__(self, vtype, vname=None, val=None):
         self.type = vtype
         self.name = vname
         self.val = val
-        self.args = args
 
     def __str__(self):
         if self.type == Scope.GLOBAL:
@@ -58,12 +57,4 @@ class Factor(object):
         elif self.type == Scope.CONSTANT:
             return "{}".format(self.val)
         elif self.type == Scope.FUNC:
-            res = '@{}'.format(self.name)
-            if self.args != None:
-                res += '('
-                for arg in self.args:
-                    res += arg[0] + ' ' + str(arg[1])
-                res += ')'
-            else:
-                res += '()'
-            return res
+            return '@{}'.format(self.name)

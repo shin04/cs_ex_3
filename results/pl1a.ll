@@ -13,7 +13,7 @@ define void @fact(i32 %1){
   6:
   %7 = load i32, i32* @n, align 4
   %8 = sub nsw i32 %7, 1
-  call void @fact(i32 %1)
+  call void @fact(i32 %8)
   %9 = load i32, i32* @temp, align 4
   %10 = load i32, i32* @n, align 4
   %11 = mul nsw i32 %9, %10
@@ -25,7 +25,7 @@ define void @fact(i32 %1){
 define i32 @main(){
   %1 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* @n)
   %2 = load i32, i32* @n, align 4
-  call void @fact(i32 %1)
+  call void @fact(i32 %2)
   %3 = load i32, i32* @temp, align 4
   %4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32 %3)
   ret i32 0
