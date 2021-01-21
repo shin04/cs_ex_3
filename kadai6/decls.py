@@ -8,7 +8,7 @@ from symtab import Scope
 class Fundecl(object):
     def __init__(self, name):
         self.name = name
-        self.arglist = []  # (type, name)
+        self.arglist = []  # arg type
         self.codes = []
         self.cntr = 1
         self.rettype = "void"
@@ -22,8 +22,10 @@ class Fundecl(object):
 
     def print_arglist(self):
         res = ''
-        for arg in self.arglist:
-            res += arg[0] + ' ' + str(arg[1])
+        for i, arg in enumerate(self.arglist):
+            if i > 0:
+                res += ', '
+            res += arg
 
         return res
 

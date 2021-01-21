@@ -25,12 +25,24 @@ class SymbolTable(object):
 
         return self.symbols
 
-    def lookup(self, token: str) -> list:
+    def countup(self, token: str) -> int:
+        count = 0
+        for symbol in self.symbols:
+            if symbol[0] == token:
+                count += 1
+        return count
+
+    def lookup(self, token: str, scope: Scope = None) -> list:
         res = []
         for symbol in self.symbols:
             if symbol[0] == token:
-                res = symbol
-                break
+                if scope != None:
+                    if scope == symbol[2]:
+                        res = symbol
+                        break
+                else:
+                    res = symbol
+                    break
 
         return res
 

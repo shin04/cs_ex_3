@@ -207,7 +207,8 @@ def p_args_action(p):
     for i in range(c_args):
         # arglistにぶっこむ
         arg = factorstack.pop()
-        functions[-1].arglist.append(('i32', arg))
+        arg.val -= 1
+        functions[-1].arglist.append('i32')
 
         # alloca
         retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
@@ -786,7 +787,12 @@ def p_var_name(p):
     var_name : IDENT
     '''
 
-    res = symbols.lookup(p[1])
+    count = symbols.countup(p[1])
+    if count != 1:
+        res = symbols.lookup(p[1], Scope.LOCAL)
+        res[1] += 1
+    else:
+        res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
