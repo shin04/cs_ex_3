@@ -11,11 +11,11 @@ define void @fact(i32){
   store i32 1, i32* @temp, align 4
   br label %12
   6:
-  %7 = load i32, i32* %3, align 4
+  %7 = load i32, i32* %2, align 4
   %8 = sub nsw i32 %7, 1
   call void @fact(i32 %8)
   %9 = load i32, i32* @temp, align 4
-  %10 = load i32, i32* %4, align 4
+  %10 = load i32, i32* %2, align 4
   %11 = mul nsw i32 %9, %10
   store i32 %11, i32* @temp, align 4
   br label %12

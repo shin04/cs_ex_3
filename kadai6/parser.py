@@ -790,12 +790,16 @@ def p_var_name(p):
     count = symbols.countup(p[1])
     if count != 1:
         res = symbols.lookup(p[1], Scope.LOCAL)
-        res[1] += 1
     else:
         res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
-    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
+    if count != 1:
+        val = res[1] + 1
+    else:
+        val = res[1]
+
+    arg2 = Factor(vtype=res[2], vname=res[0], val=val)  # 命令の第2引数
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
     if not symbols.is_args:
         l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
