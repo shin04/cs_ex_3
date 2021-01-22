@@ -8,7 +8,7 @@ define i32 @fact(i32){
   %5 = icmp sle i32 %4, 0
   br i1 %5, label %6, label %7
   6:
-  store i32 1, i32* @fact, align 4
+  store i32 1, i32* %2, align 4
   br label %13
   7:
   %8 = load i32, i32* %2, align 4
@@ -16,7 +16,7 @@ define i32 @fact(i32){
   %10 = call void @fact(i32 %9)
   %11 = load i32, i32* %2, align 4
   %12 = mul nsw i32 @fact, %11
-  store i32 %12, i32* @fact, align 4
+  store i32 %12, i32* %2, align 4
   br label %13
   13:
   %14 = load i32, i32* %2, align 4

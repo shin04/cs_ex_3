@@ -310,8 +310,12 @@ def p_assignment_statement(p):
     res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
+    if res[2] == Scope.FUNC:
+        arg2 = functions[-1].retval
+    else:
+        arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
+
     arg1 = factorstack.pop()  # 命令の第1引数
-    arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
     l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
     codelist.append(l)  # 命令列の末尾に追加
 
