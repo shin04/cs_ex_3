@@ -8,18 +8,18 @@ define i32 @power(i32, i32){
   store i32 %1, i32* %4, align 4
   %5 = alloca i32, align 4
   store i32 %0, i32* %5, align 4
-  %6 = load i32, i32* %3, align 4
+  %6 = load i32, i32* %5, align 4
   %7 = icmp sle i32 %6, 0
   br i1 %7, label %8, label %9
   8:
   store i32 1, i32* %3, align 4
   br label %16
   9:
-  %10 = load i32, i32* %2, align 4
-  %11 = load i32, i32* %3, align 4
+  %10 = load i32, i32* %4, align 4
+  %11 = load i32, i32* %5, align 4
   %12 = sub nsw i32 %11, 1
   %13 = call i32 @power(i32 %12, i32 %10)
-  %14 = load i32, i32* %2, align 4
+  %14 = load i32, i32* %4, align 4
   %15 = mul nsw i32 %13, %14
   store i32 %15, i32* %3, align 4
   br label %16

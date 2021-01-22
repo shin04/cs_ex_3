@@ -790,7 +790,7 @@ def p_expression(p):
             if fact.val != None:
                 fact.val = -fact.val
             factorstack.append(fact)
-    elif len(p) == 4:
+    elif len(p) in [4, 8]:
         # 右辺が3個の場合
         arg2 = factorstack.pop()  # 命令の第2引数をポップ
         arg1 = factorstack.pop()  # 命令の第1引数をポップ
@@ -853,7 +853,7 @@ def p_var_name(p):
     print('LOOKUP', res)
 
     if count != 1:
-        val = res[1] + 1
+        val = res[1] + 1 + len(functions[-1].arglist)
     else:
         val = res[1]
 
@@ -870,8 +870,6 @@ def p_arg_list(p):
     arg_list : expression
              | arg_list COMMA expression
     '''
-
-    # symbols.is_args = False
 
 
 def p_id_list(p):
