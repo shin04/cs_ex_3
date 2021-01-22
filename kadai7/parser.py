@@ -706,8 +706,9 @@ def p_read_statemtnt(p):
     l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
     codelist.append(l)
 
-    l = '@.str = private unnamed_addr constant [3 x i8] c\"%d\\00\", align 1'
-    functions[0].codes.insert(0, l)
+    if str(functions[0].codes[0])[:5] != '@.str':
+        l = '@.str = private unnamed_addr constant [3 x i8] c\"%d\\00\", align 1'
+        functions[0].codes.insert(0, l)
 
     functions[-1].use_read = llvmcodes.LLVMCodeDeclare(proc_type, proc)
 

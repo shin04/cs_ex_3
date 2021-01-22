@@ -1,5 +1,4 @@
 @.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
-@.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
 @m = common global i32 0, align 4
 @n = common global i32 0, align 4
 define i32 @power(i32, i32){
