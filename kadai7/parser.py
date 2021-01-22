@@ -319,8 +319,6 @@ def p_assignment_statement(p):
     l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
     codelist.append(l)  # 命令列の末尾に追加
 
-    print(l)
-
 
 def p_if_statement(p):
     '''
@@ -600,13 +598,13 @@ def p_set_args(p):
         # 戻り値なし
         l = llvmcodes.LLVMCodeProcCall('void', fact, args)
         codelist.append(l)
+        factorstack.append(fact)
     else:
         # 戻り値あり
         reg = Factor(Scope.LOCAL, val=functions[-1].get_register())
         l = llvmcodes.LLVMCodeProcCall('i32', fact, args, reg=reg)
         codelist.append(l)
-
-    factorstack.append(fact)
+        factorstack.append(reg)
 
 
 def p_proc_call_name(p):
