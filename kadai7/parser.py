@@ -603,7 +603,7 @@ def p_set_args(p):
     else:
         # 戻り値あり
         reg = Factor(Scope.LOCAL, val=functions[-1].get_register())
-        l = llvmcodes.LLVMCodeProcCall('void', fact, args, reg=reg)
+        l = llvmcodes.LLVMCodeProcCall('i32', fact, args, reg=reg)
         codelist.append(l)
 
     factorstack.append(fact)
