@@ -639,6 +639,8 @@ def p_block_statement(p):
             load_code = llvmcodes.LLVMCodeLoad(retval, rval)
             codelist.append(load_code)
             rval = retval
+        if func.name == 'main':
+            rval = 0
         ret_code = llvmcodes.LLVMCodeRet(rtype, rval)
         codelist.append(ret_code)
 

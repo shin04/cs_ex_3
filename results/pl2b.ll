@@ -34,7 +34,7 @@ define i32 @main(){
   %4 = load i32, i32* @n, align 4
   %5 = call i32 @power(i32 %4, i32 %3)
   %6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32 %5)
-  ret i32 %0
+  ret i32 0
 }
 declare i32 @scanf(i8*, ...)
 declare i32 @printf(i8*, ...)

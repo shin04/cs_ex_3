@@ -27,7 +27,7 @@ define i32 @main(){
   %2 = load i32, i32* @n, align 4
   %3 = call i32 @fact(i32 %2)
   %4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32 %3)
-  ret i32 %0
+  ret i32 0
 }
 declare i32 @scanf(i8*, ...)
 declare i32 @printf(i8*, ...)

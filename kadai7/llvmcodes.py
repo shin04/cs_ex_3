@@ -150,8 +150,6 @@ class LLVMCodeRet(LLVMCode):
     def __str__(self):
         if self.rtype == 'void':
             return "ret {}".format(self.rtype)
-        elif self.rtype == 'main':
-            return "ret i32 0"
         else:
             return "ret {} {}".format(self.rtype, self.val)
 
