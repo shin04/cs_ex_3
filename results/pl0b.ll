@@ -39,16 +39,16 @@ define i32 @main(){
   2:
   %3 = load i32, i32* @n, align 4
   %4 = icmp slt i32 1, %3
-  br i1 %4, label %5, label %9
+  br i1 %4, label %5, label %10
   5:
   %6 = load i32, i32* @n, align 4
   store i32 %6, i32* @x, align 4
-  call void @prime()
-  %7 = load i32, i32* @n, align 4
-  %8 = sub nsw i32 %7, 1
-  store i32 %8, i32* @n, align 4
+  %7 = call i32 @prime()
+  %8 = load i32, i32* @n, align 4
+  %9 = sub nsw i32 %8, 1
+  store i32 %9, i32* @n, align 4
   br label %2
-  9:
+  10:
   ret i32 0
 }
 declare i32 @scanf(i8*, ...)

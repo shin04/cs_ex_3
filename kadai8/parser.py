@@ -15,10 +15,12 @@ symbols = SymbolTable()
 factorstack = []
 functions = []
 codelist = []
-labels = []
+# labels = []
 
-while_undifined_label = -1
-while_first_label = -1
+# while_undifined_label = -1
+# while_first_label = -1
+while_undif_labels = []
+while_fir_labels = []
 
 for_undifined_label = -1
 for_first_label = -1
@@ -280,7 +282,7 @@ def p_statement(p):
     '''
     statement : assignment_statement
               | if_statement
-              | statement_action_1 while_statement
+              | while_process while_statement
               | for_statement
               | proc_call_statement
               | null_statement
@@ -290,15 +292,16 @@ def p_statement(p):
     '''
 
 
-def p_statement_action_1(p):
+def p_while_process(p):
     '''
-    statement_action_1 :
+    while_process :
     '''
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    global while_first_label
-    while_first_label = label_val
+    # global while_first_label
+    # while_first_label = label_val
+    while_fir_labels.append(label_val)
 
     l = llvmcodes.LLVMCodeBrUncond(label_val)
     codelist.append(l)
@@ -394,7 +397,8 @@ def p_else_action_1(p):
     else_action_1 :
     '''
 
-    symbols.is_block = True
+    # symbols.is_block = True
+    symbols.block_count += 1
     symbols.is_else_block = True
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
@@ -423,16 +427,27 @@ def p_while_statement(p):
     while_statement : WHILE condition while_action_2 DO while_action_1 statement
     '''
 
+    print('codelist length', len(codelist))
+
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    if while_undifined_label != -1:
-        l = codelist[while_undifined_label]
+    # if while_undifined_label != -1:
+    #     l = codelist[while_undifined_label]
+    #     arg1 = l.arg1
+    #     arg2 = l.arg2
+    #     arg3 = label_val
+    #     codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+    if while_undif_labels:
+        undif_index = while_undif_labels.pop()
+        l = codelist[undif_index]
         arg1 = l.arg1
         arg2 = l.arg2
         arg3 = label_val
-        codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+        codelist[undif_index] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
-    l = llvmcodes.LLVMCodeBrUncond(while_first_label)
+    # l = llvmcodes.LLVMCodeBrUncond(while_first_label)
+    fir_label = while_fir_labels.pop()
+    l = llvmcodes.LLVMCodeBrUncond(fir_label)
     codelist.append(l)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
@@ -444,7 +459,8 @@ def p_while_action_1(p):
     while_action_1 :
     '''
 
-    symbols.is_block = True
+    # symbols.is_block = True
+    symbols.block_count += 1
 
 
 def p_while_action_2(p):
@@ -457,8 +473,9 @@ def p_while_action_2(p):
     l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    global while_undifined_label
-    while_undifined_label = len(codelist)-1
+    # global while_undifined_label
+    # while_undifined_label = len(codelist)-1
+    while_undif_labels.append(len(codelist)-1)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
@@ -535,7 +552,8 @@ def p_for_action_2(p):
     for_action_2 :
     '''
 
-    symbols.is_block = True
+    # symbols.is_block = True
+    symbols.block_count += 1
 
 
 def p_for_action_3(p):
@@ -633,6 +651,8 @@ def p_block_statement(p):
     '''
     block_statement : BEGIN begin_action_1 statement_list END
     '''
+    print('block statement')
+    print('block count', symbols.block_count)
 
     def end_proc():
         global factorstack, codelist
@@ -656,9 +676,11 @@ def p_block_statement(p):
         codelist = []
         factorstack = []
 
-    if symbols.is_block:
+    # if symbols.is_block:
+    if symbols.block_count > 0:
         if not symbols.is_else_block:
-            symbols.is_block = False
+            # symbols.is_block = False
+            symbols.block_count -= 1
         # 手続きの終了
         if symbols.is_func and not symbols.is_else_block:
             symbols.is_func = False
@@ -666,8 +688,11 @@ def p_block_statement(p):
             print('DELETE', res)
 
             end_proc()
-
     else:
+        if symbols.is_func:
+            symbols.is_func = False
+            res = symbols.delete()
+            print('DELETE', res)
         end_proc()
 
 
@@ -676,7 +701,8 @@ def p_begin_action_1(p):
     begin_action_1 :
     '''
 
-    if not symbols.is_block:
+    # if not symbols.is_block:
+    if symbols.block_count <= 0:
         # 初めて手続きに入ったならコードリストのリセット
         if len(functions) == 1:
             global codelist, factorstack

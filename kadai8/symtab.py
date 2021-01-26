@@ -16,7 +16,8 @@ class SymbolTable(object):
         self.symbols = []
         self.is_func = False
         self.is_args = False
-        self.is_block = False
+        # self.is_block = False
+        self.block_count = 0
         self.is_else_block = False
 
     def insert(self, token: str, token_type: Scope, address=0) -> list:
