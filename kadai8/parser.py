@@ -335,6 +335,7 @@ def p_if_statement(p):
     if_statement : IF condition if_action_1 THEN statement else_statement
     '''
 
+    symbols.is_if = False
     symbols.is_else_block = False
 
 
@@ -342,6 +343,8 @@ def p_if_action_1(p):
     '''
     if_action_1 :
     '''
+
+    symbols.is_if = True
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
     retval = factorstack.pop()
@@ -700,6 +703,10 @@ def p_begin_action_1(p):
     '''
     begin_action_1 :
     '''
+
+    if symbols.is_if:
+        symbols.block_count += 1
+        symbols.is_if = False
 
     # if not symbols.is_block:
     if symbols.block_count <= 0:
