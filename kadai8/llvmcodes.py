@@ -33,12 +33,15 @@ class LLVMCodeAlloca(LLVMCode):
 
 class LLVMCodeGlobal(LLVMCode):
     # global variable
-    def __init__(self, var_name):
+    def __init__(self, var_name, vtype='i32', initval=0):
         super().__init__()
         self.var_name = var_name
+        self.vtype = vtype
+        self.initval = initval
 
     def __str__(self):
-        return str(self.var_name) + " = common global i32 0, align 4"
+        return "{} = common global {} {}, align 4".format(str(self.var_name), self.vtype, self.initval)
+        # return str(self.var_name) + " = common global i32 0, align 4"
 
 
 class LLVMCodeLoad(LLVMCode):
@@ -203,3 +206,24 @@ class LLVMCodeDeclare(LLVMCode):
 
     def __str__(self):
         return 'declare {} @{}(i8*, ...)'.format(self.proc_type, self.proc)
+
+
+class LLVMCodeSext(LLVMCode):
+    def __init__(self, reg1, reg2, fromType, toType):
+        self.reg1 = reg1
+        self.reg2 = reg2
+        self.fromType = fromType
+        self.toType = toType
+
+    def __str__(self):
+        return '{} = sext {} {} to {}'.format(str(self.reg1), self.fromType, str(self.reg2), self.toType)
+
+
+class LLVMCodeGetElementPtr(LLVMCode):
+    def __init__(self, retval, arg1, arg2):
+        self.retval = retval
+        self.arg1 = arg1
+        self.arg2 = arg2
+
+    def __str__(self):
+        return '{} = getelementptr inbounds [100 x i32], [100 x i32]* {}, i64 0, i64 %{}'.format(str(self.retval), str(self.arg1), str(self.arg2))

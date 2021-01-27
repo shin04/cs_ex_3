@@ -2,8 +2,31 @@
 @i = common global i32 0, align 4
 @j = common global i32 0, align 4
 @n = common global i32 0, align 4
-@a = common global i32 0, align 4
+@a = common global [100 x i32] zeroinitializer, align 4
 define void @initialize(i32){
+  %2 = alloca i32, align 4
+  store i32 %0, i32* %2, align 4
+  %3 = alloca i32, align 4
+  store i32 1, i32* @i, align 4
+  %4 = load i32, i32* %3, align 4
+  br label %5
+  5:
+  %6 = load i32, i32* @i, align 4
+  %7 = icmp slt i32 %6, %4
+  br i1 %7, label %8, label %16
+  8:
+  %9 = load i32, i32* %5, align 4
+  %10 = sext i32 %9 to i64
+  %11 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %%10
+  %12 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* %11)
+  br label %13
+  13:
+  %14 = load i32, i32* @i, align 4
+  %15 = add nsw i32 %14, 1
+  store i32 %15, i32* @i, align 4
+  br label %5
+  16:
+  ret void
 }
 declare i32 @scanf(i8*, ...)
 define void @swap(i32){

@@ -250,10 +250,12 @@ def p_proc_name(p):
     '''
 
     # 手続き宣言時にコードリストのリセット
+    # 初めて手続きが宣言された時
     global codelist, factorstack
-    functions[-1].codes = codelist
-    codelist = []
-    factorstack = []
+    if len(functions) <= 1:
+        functions[-1].codes = codelist
+        codelist = []
+        factorstack = []
 
     res = symbols.insert(p[1], Scope.FUNC)
     symbols.is_func = True
@@ -429,8 +431,6 @@ def p_while_statement(p):
     '''
     while_statement : WHILE condition while_action_2 DO while_action_1 statement
     '''
-
-    print('codelist length', len(codelist))
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
@@ -621,7 +621,6 @@ def p_set_args(p):
         else:
             args.append(('%' + str(fact.val), 'i32'))
 
-    print(fact.ret)
     if not fact.ret:
         # 戻り値なし
         l = llvmcodes.LLVMCodeProcCall('void', fact, args)
@@ -654,8 +653,6 @@ def p_block_statement(p):
     '''
     block_statement : BEGIN begin_action_1 statement_list END
     '''
-    print('block statement')
-    print('block count', symbols.block_count)
 
     def end_proc():
         global factorstack, codelist
@@ -740,11 +737,30 @@ def p_read_statemtnt(p):
     res = symbols.lookup(p[3])
     print('LOOKUP', res)
 
+    # arrayの時の処理
+    arr_index = 0
+    if len(p) == 8:
+        arr_index = factorstack.pop()
+        index_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        sext_code = llvmcodes.LLVMCodeSext(index_retval, arr_index, 'i32', 'i64')
+        codelist.append(sext_code)
+
+        arr_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        var = Factor(res[2], res[0], res[1])
+        gep_code = llvmcodes.LLVMCodeGetElementPtr(arr_retval, var, index_retval)
+        codelist.append(gep_code)
+
+        factorstack.append(arr_retval)
+    # arrayじゃない時
+    else:
+        var = Factor(res[2], res[0], res[1])
+        factorstack.append(var)
+
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
     proc_type = 'i32'
     proc = 'scanf'
     var_type = 'i32*'
-    var = Factor(res[2], res[0], res[1])
+    var = factorstack.pop()
     l = llvmcodes.LLVMCodeOutProcCall(retval, proc_type, proc, var_type, var)
     codelist.append(l)
 
@@ -922,18 +938,28 @@ def p_id_list(p):
     id_list : IDENT
             | id_list COMMA IDENT
 
-            | IDENT LBRACE NUMBER INTERVAL NUMBER RBRACE
-            | id_list COMMA IDENT LBRACE NUMBER INTERVAL NUMBER RBRACE
+            | IDENT LBRACE NUMBER INTERVAL NUMBER calc_array_range RBRACE
+            | id_list COMMA IDENT LBRACE NUMBER INTERVAL NUMBER calc_array_range RBRACE
     '''
 
     var_name = ''
     var_address = 0
     scope = Scope.LOCAL if symbols.is_func else Scope.GLOBAL
 
+    var_type = 'i32'
+    var_init_val = 0
+
+    # IDENTの位置
     if p[1] == None:
         index = 3
     else:
         index = 1
+
+    # arrayかどうか
+    if len(p) == 8 or len(p) == 10:
+        arr_range = factorstack.pop()
+        var_type = '[{} x i32]'.format(arr_range)
+        var_init_val = 'zeroinitializer'
 
     var_name = p[index]
 
@@ -946,12 +972,23 @@ def p_id_list(p):
         factorstack.append(retval)
     else:
         retval = Factor(Scope.GLOBAL, var_name)
-        l = llvmcodes.LLVMCodeGlobal(retval)
+        l = llvmcodes.LLVMCodeGlobal(retval, vtype=var_type, initval=var_init_val)
         codelist.append(l)
         factorstack.append(retval)
 
     res = symbols.insert(var_name, scope, var_address)
     print('INSERT', res)
+
+
+def p_calc_array_range(p):
+    '''
+    calc_array_range :
+    '''
+
+    s = int(p[-3])
+    g = int(p[-1])
+    arr_range = g - s + 1
+    factorstack.append(arr_range)
 
 
 def p_error(p):
