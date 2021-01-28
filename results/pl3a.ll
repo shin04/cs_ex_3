@@ -59,59 +59,59 @@ define i32 @main(){
   %1 = call i32 (i8*, ...) @scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* @n)
   %2 = load i32, i32* @n, align 4
   %3 = icmp sle i32 %2, 100
-  br i1 %3, label %4, label %42
+  br i1 %3, label %4, label %40
   4:
   %5 = load i32, i32* @n, align 4
-  %6 = call i32 @initialize(i32 %5)
-  %7 = load i32, i32* @n, align 4
-  store i32 %7, i32* @i, align 4
-  br label %8
-  8:
-  %9 = load i32, i32* @i, align 4
-  %10 = icmp sle i32 1, %9
-  br i1 %10, label %11, label %41
-  11:
+  call void @initialize(i32 %5)
+  %6 = load i32, i32* @n, align 4
+  store i32 %6, i32* @i, align 4
+  br label %7
+  7:
+  %8 = load i32, i32* @i, align 4
+  %9 = icmp sle i32 1, %8
+  br i1 %9, label %10, label %39
+  10:
   store i32 1, i32* @j, align 4
-  br label %12
-  12:
-  %13 = load i32, i32* @j, align 4
-  %14 = load i32, i32* @i, align 4
-  %15 = icmp slt i32 %13, %14
-  br i1 %15, label %16, label %33
-  16:
-  %17 = load i32, i32* @j, align 4
-  %18 = sext i32 %17 to i64
-  %19 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %18
-  %20 = load i32, i32* %19, align 4
-  %21 = load i32, i32* @j, align 4
-  %22 = add nsw i32 %21, 1
-  %23 = sext i32 %22 to i64
-  %24 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %23
-  %25 = load i32, i32* %24, align 4
-  %26 = icmp sgt i32 %20, %25
-  br i1 %26, label %27, label %30
-  27:
-  %28 = load i32, i32* @j, align 4
-  %29 = call i32 @swap(i32 %28)
-  br label %30
-  30:
-  %31 = load i32, i32* @j, align 4
-  %32 = add nsw i32 %31, 1
-  store i32 %32, i32* @j, align 4
-  br label %12
-  33:
-  %34 = load i32, i32* @i, align 4
-  %35 = sext i32 %34 to i64
-  %36 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %35
-  %37 = load i32, i32* %36, align 4
-  %38 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32 %37)
-  %39 = load i32, i32* @i, align 4
-  %40 = sub nsw i32 %39, 1
-  store i32 %40, i32* @i, align 4
-  br label %8
-  41:
-  br label %42
-  42:
+  br label %11
+  11:
+  %12 = load i32, i32* @j, align 4
+  %13 = load i32, i32* @i, align 4
+  %14 = icmp slt i32 %12, %13
+  br i1 %14, label %15, label %31
+  15:
+  %16 = load i32, i32* @j, align 4
+  %17 = sext i32 %16 to i64
+  %18 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %17
+  %19 = load i32, i32* %18, align 4
+  %20 = load i32, i32* @j, align 4
+  %21 = add nsw i32 %20, 1
+  %22 = sext i32 %21 to i64
+  %23 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %22
+  %24 = load i32, i32* %23, align 4
+  %25 = icmp sgt i32 %19, %24
+  br i1 %25, label %26, label %28
+  26:
+  %27 = load i32, i32* @j, align 4
+  call void @swap(i32 %27)
+  br label %28
+  28:
+  %29 = load i32, i32* @j, align 4
+  %30 = add nsw i32 %29, 1
+  store i32 %30, i32* @j, align 4
+  br label %11
+  31:
+  %32 = load i32, i32* @i, align 4
+  %33 = sext i32 %32 to i64
+  %34 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %33
+  %35 = load i32, i32* %34, align 4
+  %36 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32 %35)
+  %37 = load i32, i32* @i, align 4
+  %38 = sub nsw i32 %37, 1
+  store i32 %38, i32* @i, align 4
+  br label %7
+  39:
+  br label %40
+  40:
   ret i32 0
 }
 declare i32 @scanf(i8*, ...)

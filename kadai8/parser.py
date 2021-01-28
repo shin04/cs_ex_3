@@ -732,7 +732,7 @@ def p_proc_call_name(p):
 
     func = Factor(Scope.FUNC, vname=res[0])
     for f in functions:
-        if f.name == res[0]:
+        if f.name == res[0] and f.retval.val != 0:
             func.ret = True
     factorstack.append(func)
 
