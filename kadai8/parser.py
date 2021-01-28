@@ -670,7 +670,7 @@ def p_for_action_3(p):
     codelist.append(l_load)
     factorstack.append(arg1)
 
-    cmptype = llvmcodes.CmpType.SLT
+    cmptype = llvmcodes.CmpType.SLE
     arg1 = factorstack.pop()
     retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
     l_icmp = llvmcodes.LLVMCodeIcmp(cmptype, arg1, l_icmp_arg2, retval)
@@ -856,7 +856,12 @@ def p_read_statemtnt(p):
         l = '@.str = private unnamed_addr constant [3 x i8] c\"%d\\00\", align 1'
         functions[0].codes.insert(0, l)
 
-    functions[-1].use_read = llvmcodes.LLVMCodeDeclare(proc_type, proc)
+    need_use_read = True
+    for func in functions:
+        if func.use_read != '':
+            need_use_read = False
+    if need_use_read:
+        functions[-1].use_read = llvmcodes.LLVMCodeDeclare(proc_type, proc)
 
 
 def p_write_statemtnt(p):

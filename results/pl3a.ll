@@ -12,7 +12,7 @@ define void @initialize(i32){
   br label %5
   5:
   %6 = load i32, i32* %3, align 4
-  %7 = icmp slt i32 %6, %4
+  %7 = icmp sle i32 %6, %4
   br i1 %7, label %8, label %16
   8:
   %9 = load i32, i32* %3, align 4
@@ -114,5 +114,4 @@ define i32 @main(){
   40:
   ret i32 0
 }
-declare i32 @scanf(i8*, ...)
 declare i32 @printf(i8*, ...)
