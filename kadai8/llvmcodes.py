@@ -226,4 +226,4 @@ class LLVMCodeGetElementPtr(LLVMCode):
         self.arg2 = arg2
 
     def __str__(self):
-        return '{} = getelementptr inbounds [100 x i32], [100 x i32]* {}, i64 0, i64 %{}'.format(str(self.retval), str(self.arg1), str(self.arg2))
+        return '{} = getelementptr inbounds [100 x i32], [100 x i32]* {}, i64 0, i64 {}'.format(str(self.retval), str(self.arg1), str(self.arg2))

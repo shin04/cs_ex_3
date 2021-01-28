@@ -26,10 +26,16 @@ for_undifined_label = -1
 for_first_label = -1
 for_cond_var = Factor(Scope.LOCAL)
 
-if_undifined_label = -1
-if_first_label = -1
-else_undifined_label = -1
+# if_undifined_label = -1
+# if_first_label = -1
+# else_undifined_label = -1
+if_undif_labels = []
+else_undif_labels = []
 EXIST_ELSE = False
+
+array_flag = False
+is_calc_array_index = False
+index_calc_type = ''
 
 RESULT_FILE_NAME = 'result'
 
@@ -250,7 +256,7 @@ def p_proc_name(p):
     '''
 
     # 手続き宣言時にコードリストのリセット
-    # 初めて手続きが宣言された時
+    # 初めて手続きが宣言された時のみ
     global codelist, factorstack
     if len(functions) <= 1:
         functions[-1].codes = codelist
@@ -316,20 +322,81 @@ def p_assignment_statement(p):
     '''
     assignment_statement : IDENT ASSIGN expression
 
-                         | IDENT LBRACE expression RBRACE ASSIGN expression
+                         | IDENT LBRACE set_array_flag expression RBRACE reset_calc_array_index ASSIGN expression
     '''
+
+    global index_calc_type
 
     res = symbols.lookup(p[1])
     print('LOOKUP', res)
 
-    if res[2] == Scope.FUNC:
-        arg2 = functions[-1].retval
-    else:
-        arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
+    # arrayの時の処理
+    if len(p) == 9:
+        store_arg = factorstack.pop()
 
-    arg1 = factorstack.pop()  # 命令の第1引数
-    l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
-    codelist.append(l)  # 命令列の末尾に追加
+        add_arg = None
+        if index_calc_type != '':
+            add_arg = factorstack.pop()
+            index_calc_type = ''
+
+        arg2 = factorstack.pop()
+        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        load_code = llvmcodes.LLVMCodeLoad(retval, arg2)
+        codelist.append(load_code)
+        factorstack.append(retval)
+
+        if add_arg != None:
+            retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+            arg1 = factorstack.pop()
+            add_code = llvmcodes.LLVMCodeAdd(arg1, add_arg, retval)
+            codelist.append(add_code)
+            factorstack.append(retval)
+
+        arr_index = 0
+        arr_index = factorstack.pop()
+        index_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        sext_code = llvmcodes.LLVMCodeSext(index_retval, arr_index, 'i32', 'i64')
+        codelist.append(sext_code)
+
+        arr_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        var = Factor(res[2], res[0], res[1])
+        gep_code = llvmcodes.LLVMCodeGetElementPtr(arr_retval, var, index_retval)
+        codelist.append(gep_code)
+
+        factorstack.append(arr_retval)
+
+        load_reg = factorstack.pop()
+        load_code = llvmcodes.LLVMCodeStore(store_arg, load_reg)
+        codelist.append(load_code)
+    else:
+
+        if res[2] == Scope.FUNC:
+            arg2 = functions[-1].retval
+        else:
+            arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
+
+        arg1 = factorstack.pop()  # 命令の第1引数
+        l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
+        codelist.append(l)  # 命令列の末尾に追加
+
+
+def p_set_array_flag(p):
+    '''
+    set_array_flag : 
+    '''
+
+    global array_flag, is_calc_array_index
+    array_flag = True
+    is_calc_array_index = True
+
+
+def p_reset_calc_array_index(p):
+    '''
+    reset_calc_array_index :
+    '''
+
+    global is_calc_array_index
+    is_calc_array_index = False
 
 
 def p_if_statement(p):
@@ -353,8 +420,10 @@ def p_if_action_1(p):
     l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    global if_undifined_label
-    if_undifined_label = len(codelist)-1
+    # global if_undifined_label
+    # if_undifined_label = len(codelist)-1
+    global if_undif_labels
+    if_undif_labels.append(len(codelist)-1)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
@@ -370,10 +439,12 @@ def p_else_statement(p):
         # elseがある
         label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-        if else_undifined_label != -1:
-            l = codelist[else_undifined_label]
+        # if else_undifined_label != -1:
+        if else_undif_labels != []:
+            index = else_undif_labels.pop()
+            l = codelist[else_undiindexfined_label]
             arg1 = label_val
-            codelist[else_undifined_label] = llvmcodes.LLVMCodeBrUncond(arg1)
+            codelist[index] = llvmcodes.LLVMCodeBrUncond(arg1)
 
         l = llvmcodes.LLVMCodeBrUncond(label_val)
         codelist.append(l)
@@ -383,12 +454,14 @@ def p_else_statement(p):
     else:
         label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-        if if_undifined_label != -1:
-            l = codelist[if_undifined_label]
+        # if if_undifined_label != -1:
+        if if_undif_labels != []:
+            index = if_undif_labels.pop()
+            l = codelist[index]
             arg1 = l.arg1
             arg2 = l.arg2
             arg3 = label_val
-            codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+            codelist[index] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
         l = llvmcodes.LLVMCodeBrUncond(label_val)
         codelist.append(l)
@@ -408,17 +481,21 @@ def p_else_action_1(p):
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    if if_undifined_label != -1:
-        l = codelist[if_undifined_label]
+    # if if_undifined_label != -1:
+    if if_undif_labels != []:
+        index = if_undif_labels.pop()
+        l = codelist[index]
         arg1 = l.arg1
         arg2 = l.arg2
         arg3 = label_val
-        codelist[if_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
+        codelist[index] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
     if p[-1]:
         l = llvmcodes.LLVMCodeBrUncond('undifined')
-        global else_undifined_label
-        else_undifined_label = len(codelist)
+        # global else_undifined_label
+        # else_undifined_label = len(codelist)
+        global else_undif_labels
+        else_undif_labels.append(len(codelist))
     else:
         l = llvmcodes.LLVMCodeBrUncond(label_val)
     codelist.append(l)
@@ -495,7 +572,14 @@ def p_for_statement(p):
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
 
-    res = symbols.lookup(p[2])
+    # res = symbols.lookup(p[2])
+    ## --- 変更 --- ##
+    count = symbols.countup(p[2])
+    if count != 1:
+        res = symbols.lookup(p[2], Scope.LOCAL)
+    else:
+        res = symbols.lookup(p[2])
+    ## --- ここまで--- ##
     arg1 = Factor(Scope.LOCAL, val=functions[-1].get_register())
     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
     l = llvmcodes.LLVMCodeLoad(arg1, arg2)
@@ -538,8 +622,12 @@ def p_for_action_1(p):
     for_action_1 :
     '''
 
-    res = symbols.lookup(p[-3])
-    print('LOOKUP for', res)
+    count = symbols.countup(p[-3])
+    if count != 1:
+        res = symbols.lookup(p[-3], Scope.LOCAL)
+    else:
+        res = symbols.lookup(p[-3])
+    print('LOOKUP', res)
 
     arg1 = factorstack.pop()
     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
@@ -838,6 +926,8 @@ def p_expression(p):
                | expression MINUS proc_call_name LPAREN arg_list RPAREN set_args
     '''
 
+    global is_calc_array_index, index_calc_type
+
     if len(p) == 3:
         # 右辺が2個の場合
         if p[1] == '+':
@@ -850,16 +940,19 @@ def p_expression(p):
                 fact.val = -fact.val
             factorstack.append(fact)
     elif len(p) in [4, 8]:
-        # 右辺が3個の場合
-        arg2 = factorstack.pop()  # 命令の第2引数をポップ
-        arg1 = factorstack.pop()  # 命令の第1引数をポップ
-        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-        if p[2] == "+":  # PLUS
-            l = llvmcodes.LLVMCodeAdd(arg1, arg2, retval)  # 命令を生成
-        elif p[2] == "-":  # MINUS
-            l = llvmcodes.LLVMCodeSub(arg1, arg2, retval)  # 命令を生成
-        codelist.append(l)  # 命令列の末尾に追加
-        factorstack.append(retval)  # 加算の結果をスタックにプッシュ
+        if not is_calc_array_index:
+            # 右辺が3個の場合
+            arg2 = factorstack.pop()  # 命令の第2引数をポップ
+            arg1 = factorstack.pop()  # 命令の第1引数をポップ
+            retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+            if p[2] == "+":  # PLUS
+                l = llvmcodes.LLVMCodeAdd(arg1, arg2, retval)  # 命令を生成
+            elif p[2] == "-":  # MINUS
+                l = llvmcodes.LLVMCodeSub(arg1, arg2, retval)  # 命令を生成
+            codelist.append(l)  # 命令列の末尾に追加
+            factorstack.append(retval)  # 加算の結果をスタックにプッシュ
+        else:
+            index_calc_type = 'add'
 
 
 def p_term(p):
@@ -906,6 +999,8 @@ def p_var_name(p):
              | IDENT LBRACE expression RBRACE
     '''
 
+    global array_flag
+
     count = symbols.countup(p[1])
     if count != 1:
         res = symbols.lookup(p[1], Scope.LOCAL)
@@ -914,16 +1009,50 @@ def p_var_name(p):
     print('LOOKUP', res)
 
     if count != 1:
-        val = res[1] + 1 + len(functions[-1].arglist)
+        # 後で書き換える
+        # 引数じゃない時は加算しない
+        if p[1] != 'i':
+            # val = res[1] + 1 + len(functions[-1].arglist)
+            val = res[1] + len(functions[-1].arglist)
+        else:
+            val = res[1]
     else:
         val = res[1]
 
-    arg2 = Factor(vtype=res[2], vname=res[0], val=val)  # 命令の第2引数
-    retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
-    if not symbols.is_args:
-        l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
-        codelist.append(l)  # 命令列の末尾に追加
-    factorstack.append(retval)  # Loadの結果をスタックにプッシュ
+    # arrayの時の処理
+    arr_index = 0
+    if len(p) == 5:
+        arr_index = factorstack.pop()
+        index_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        sext_code = llvmcodes.LLVMCodeSext(index_retval, arr_index, 'i32', 'i64')
+        codelist.append(sext_code)
+
+        arr_retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        var = Factor(res[2], res[0], val=val)
+        gep_code = llvmcodes.LLVMCodeGetElementPtr(arr_retval, var, index_retval)
+        codelist.append(gep_code)
+
+        factorstack.append(arr_retval)
+
+        retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+        load_reg = factorstack.pop()
+        load_code = llvmcodes.LLVMCodeLoad(retval, load_reg)
+        codelist.append(load_code)
+        factorstack.append(retval)
+    # arrayじゃないときの処理
+    else:
+        if array_flag:
+            arg2 = Factor(vtype=res[2], vname=res[0], val=val)  # 命令の第2引数
+            factorstack.append(arg2)
+
+            array_flag = False
+        else:
+            arg2 = Factor(vtype=res[2], vname=res[0], val=val)  # 命令の第2引数
+            retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
+            if not symbols.is_args:
+                l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
+                codelist.append(l)  # 命令列の末尾に追加
+            factorstack.append(retval)  # Loadの結果をスタックにプッシュ
 
 
 def p_arg_list(p):
