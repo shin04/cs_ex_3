@@ -130,7 +130,7 @@ def t_error(t):
 
 def p_program(p):
     '''
-    program : PROGRAM IDENT SEMICOLON outblock PERIOD
+    program : PROGRAM IDENT SEMICOLON outblock PERIOD end_check
     '''
 
     file_path = ''
@@ -143,6 +143,27 @@ def p_program(p):
     with open(file_path, "w") as fout:
         for f in functions:
             f.print(fout)
+
+
+def p_end_check(p):
+    '''
+    end_check :
+    '''
+
+    global factorstack, codelist
+
+    if codelist != []:
+        # return文
+        func = functions[-1]
+        rtype = func.rettype
+        rval = 0
+        ret_code = llvmcodes.LLVMCodeRet(rtype, rval)
+        codelist.append(ret_code)
+
+        # コードリストのリセット
+        functions[-1].codes = codelist
+        codelist = []
+        factorstack = []
 
 
 def p_outblock(p):
@@ -194,16 +215,45 @@ def p_subprog_decl(p):
 
 def p_func_decl(p):
     '''
-    func_decl : FUNCTION proc_name SEMICOLON inblock
-              | FUNCTION proc_name LPAREN args_flag id_list args_action RPAREN SEMICOLON inblock
+    func_decl : FUNCTION check_end_preprocess proc_name SEMICOLON inblock
+              | FUNCTION check_end_preprocess proc_name LPAREN args_flag id_list args_action RPAREN SEMICOLON inblock
     '''
 
 
 def p_proc_decl(p):
     '''
-    proc_decl : PROCEDURE proc_name SEMICOLON inblock
-              | PROCEDURE proc_name LPAREN args_flag id_list args_action RPAREN SEMICOLON inblock
+    proc_decl : PROCEDURE check_end_preprocess proc_name SEMICOLON inblock
+              | PROCEDURE check_end_preprocess proc_name LPAREN args_flag id_list args_action RPAREN SEMICOLON inblock
     '''
+
+
+def p_check_end_preprocess(p):
+    '''
+    check_end_preprocess :
+    '''
+
+    global factorstack, codelist
+    # コードリストのリセット
+    if functions[-1].name != '' and len(codelist) > 0:
+        symbols.is_func = False
+
+        # return文
+        func = functions[-1]
+        rtype = func.rettype
+        rval = func.retval
+        if rval.val != 0:
+            retval = Factor(Scope.LOCAL, val=func.get_register())
+            load_code = llvmcodes.LLVMCodeLoad(retval, rval)
+            codelist.append(load_code)
+            rval = retval
+        if func.name == 'main':
+            rval = 0
+        ret_code = llvmcodes.LLVMCodeRet(rtype, rval)
+        codelist.append(ret_code)
+
+        functions[-1].codes = codelist
+        codelist = []
+        factorstack = []
 
 
 def p_args_flag(p):
@@ -506,8 +556,10 @@ def p_else_action_1(p):
 
 def p_while_statement(p):
     '''
-    while_statement : WHILE condition while_action_2 DO while_action_1 statement
+    while_statement : WHILE set_while_flag condition while_action_2 DO while_action_1 statement
     '''
+
+    symbols.is_while_block = False
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
@@ -532,6 +584,14 @@ def p_while_statement(p):
 
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
+
+
+def p_set_while_flag(p):
+    '''
+    set_while_flag :
+    '''
+
+    symbols.is_while_block = True
 
 
 def p_while_action_1(p):
@@ -770,7 +830,8 @@ def p_block_statement(p):
             # symbols.is_block = False
             symbols.block_count -= 1
         # 手続きの終了
-        if symbols.is_func and not symbols.is_else_block:
+        if symbols.is_func and not symbols.is_else_block and not symbols.is_while_block:
+            # if symbols.is_func and not symbols.is_else_block:
             symbols.is_func = False
             res = symbols.delete()
             print('DELETE', res)

@@ -20,6 +20,7 @@ class SymbolTable(object):
         self.block_count = 0
         self.is_if = False
         self.is_else_block = False
+        self.is_while_block = False
 
     def insert(self, token: str, token_type: Scope, address=0) -> list:
         symbol = [token, address, token_type]
