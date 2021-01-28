@@ -28,22 +28,22 @@ define void @check(i32){
   %2 = alloca i32, align 4
   store i32 %0, i32* %2, align 4
   %3 = alloca i32, align 4
-  %4 = load i32, i32* %1, align 4
-  store i32 %4, i32* @i, align 4
+  %4 = load i32, i32* %2, align 4
+  store i32 %4, i32* %3, align 4
   br label %5
   5:
-  %6 = load i32, i32* %1, align 4
+  %6 = load i32, i32* %3, align 4
   %7 = icmp sle i32 %6, 100
   br i1 %7, label %8, label %15
   8:
-  %9 = load i32, i32* %1, align 4
+  %9 = load i32, i32* %3, align 4
   %10 = sext i32 %9 to i64
   %11 = getelementptr inbounds [100 x i32], [100 x i32]* @a, i64 0, i64 %10
   store i32 1, i32* %11, align 4
-  %12 = load i32, i32* %1, align 4
-  %13 = load i32, i32* %1, align 4
+  %12 = load i32, i32* %3, align 4
+  %13 = load i32, i32* %2, align 4
   %14 = add nsw i32 %12, %13
-  store i32 %14, i32* @i, align 4
+  store i32 %14, i32* %3, align 4
   br label %5
   15:
   ret void

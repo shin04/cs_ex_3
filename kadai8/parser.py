@@ -236,6 +236,8 @@ def p_check_end_preprocess(p):
     # コードリストのリセット
     if functions[-1].name != '' and len(codelist) > 0:
         symbols.is_func = False
+        res = symbols.delete()
+        print('DELETE', res)
 
         # return文
         func = functions[-1]
@@ -419,11 +421,17 @@ def p_assignment_statement(p):
         load_code = llvmcodes.LLVMCodeStore(store_arg, load_reg)
         codelist.append(load_code)
     else:
+        # if res[2] == Scope.FUNC:
+        #     arg2 = functions[-1].retval
+        # else:
+        #     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
 
-        if res[2] == Scope.FUNC:
-            arg2 = functions[-1].retval
+        count = symbols.countup(p[1])
+        if count != 1:
+            res = symbols.lookup(p[1], Scope.LOCAL)
         else:
-            arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
+            res = symbols.lookup(p[1])
+        arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
 
         arg1 = factorstack.pop()  # 命令の第1引数
         l = llvmcodes.LLVMCodeStore(arg1, arg2)  # 命令を生成
@@ -1114,6 +1122,9 @@ def p_var_name(p):
             array_flag = False
         else:
             arg2 = Factor(vtype=res[2], vname=res[0], val=val)  # 命令の第2引数
+            ## 応急処置 ##
+            if arg2.val == 1:
+                arg2.val = 2
             retval = Factor(Scope.LOCAL, val=functions[-1].get_register())
             if not symbols.is_args:
                 l = llvmcodes.LLVMCodeLoad(retval, arg2)  # 命令を生成
