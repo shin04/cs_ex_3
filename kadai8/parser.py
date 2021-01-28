@@ -1180,10 +1180,17 @@ def p_calc_array_range(p):
     calc_array_range :
     '''
 
-    s = int(p[-3])
-    g = int(p[-1])
-    arr_range = g - s + 1
-    factorstack.append(arr_range)
+    ##############################
+    ## pl3bの配列の範囲について質問 ##
+    ##############################
+
+    # s = int(p[-3])
+    # g = int(p[-1])
+    # arr_range = g - s + 1
+    # factorstack.append(arr_range)
+
+    # 応急処置
+    factorstack.append(int(p[-1]))
 
 
 def p_error(p):

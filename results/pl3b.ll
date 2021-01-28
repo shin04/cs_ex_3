@@ -1,5 +1,5 @@
 @.str = private unnamed_addr constant [3 x i8] c"%d\00", align 1
-@a = common global [99 x i32] zeroinitializer, align 4
+@a = common global [100 x i32] zeroinitializer, align 4
 @i = common global i32 0, align 4
 @n = common global i32 0, align 4
 define void @initialize(){
