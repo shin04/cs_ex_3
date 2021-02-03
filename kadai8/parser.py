@@ -15,10 +15,7 @@ symbols = SymbolTable()
 factorstack = []
 functions = []
 codelist = []
-# labels = []
 
-# while_undifined_label = -1
-# while_first_label = -1
 while_undif_labels = []
 while_fir_labels = []
 
@@ -26,9 +23,6 @@ for_undifined_label = -1
 for_first_label = -1
 for_cond_var = Factor(Scope.LOCAL)
 
-# if_undifined_label = -1
-# if_first_label = -1
-# else_undifined_label = -1
 if_undif_labels = []
 else_undif_labels = []
 EXIST_ELSE = False
@@ -359,8 +353,6 @@ def p_while_process(p):
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    # global while_first_label
-    # while_first_label = label_val
     while_fir_labels.append(label_val)
 
     l = llvmcodes.LLVMCodeBrUncond(label_val)
@@ -421,11 +413,6 @@ def p_assignment_statement(p):
         load_code = llvmcodes.LLVMCodeStore(store_arg, load_reg)
         codelist.append(load_code)
     else:
-        # if res[2] == Scope.FUNC:
-        #     arg2 = functions[-1].retval
-        # else:
-        #     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])  # 命令の第2引数
-
         count = symbols.countup(p[1])
         if count != 1:
             res = symbols.lookup(p[1], Scope.LOCAL)
@@ -478,8 +465,6 @@ def p_if_action_1(p):
     l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    # global if_undifined_label
-    # if_undifined_label = len(codelist)-1
     global if_undif_labels
     if_undif_labels.append(len(codelist)-1)
 
@@ -497,10 +482,9 @@ def p_else_statement(p):
         # elseがある
         label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-        # if else_undifined_label != -1:
         if else_undif_labels != []:
             index = else_undif_labels.pop()
-            l = codelist[else_undiindexfined_label]
+            l = codelist[index]
             arg1 = label_val
             codelist[index] = llvmcodes.LLVMCodeBrUncond(arg1)
 
@@ -512,7 +496,6 @@ def p_else_statement(p):
     else:
         label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-        # if if_undifined_label != -1:
         if if_undif_labels != []:
             index = if_undif_labels.pop()
             l = codelist[index]
@@ -533,13 +516,11 @@ def p_else_action_1(p):
     else_action_1 :
     '''
 
-    # symbols.is_block = True
     symbols.block_count += 1
     symbols.is_else_block = True
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    # if if_undifined_label != -1:
     if if_undif_labels != []:
         index = if_undif_labels.pop()
         l = codelist[index]
@@ -550,8 +531,6 @@ def p_else_action_1(p):
 
     if p[-1]:
         l = llvmcodes.LLVMCodeBrUncond('undifined')
-        # global else_undifined_label
-        # else_undifined_label = len(codelist)
         global else_undif_labels
         else_undif_labels.append(len(codelist))
     else:
@@ -571,12 +550,6 @@ def p_while_statement(p):
 
     label_val = Factor(Scope.LOCAL, val=functions[-1].get_register())
 
-    # if while_undifined_label != -1:
-    #     l = codelist[while_undifined_label]
-    #     arg1 = l.arg1
-    #     arg2 = l.arg2
-    #     arg3 = label_val
-    #     codelist[while_undifined_label] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
     if while_undif_labels:
         undif_index = while_undif_labels.pop()
         l = codelist[undif_index]
@@ -585,7 +558,6 @@ def p_while_statement(p):
         arg3 = label_val
         codelist[undif_index] = llvmcodes.LLVMCodeBrCond(arg1, arg2, arg3)
 
-    # l = llvmcodes.LLVMCodeBrUncond(while_first_label)
     fir_label = while_fir_labels.pop()
     l = llvmcodes.LLVMCodeBrUncond(fir_label)
     codelist.append(l)
@@ -607,7 +579,6 @@ def p_while_action_1(p):
     while_action_1 :
     '''
 
-    # symbols.is_block = True
     symbols.block_count += 1
 
 
@@ -621,8 +592,6 @@ def p_while_action_2(p):
     l = llvmcodes.LLVMCodeBrCond(retval, label_val, 'undifined')
     codelist.append(l)
 
-    # global while_undifined_label
-    # while_undifined_label = len(codelist)-1
     while_undif_labels.append(len(codelist)-1)
 
     l = llvmcodes.LLVMCodeLabel(label_val)
@@ -640,14 +609,12 @@ def p_for_statement(p):
     l = llvmcodes.LLVMCodeLabel(label_val)
     codelist.append(l)
 
-    # res = symbols.lookup(p[2])
-    ## --- 変更 --- ##
     count = symbols.countup(p[2])
     if count != 1:
         res = symbols.lookup(p[2], Scope.LOCAL)
     else:
         res = symbols.lookup(p[2])
-    ## --- ここまで--- ##
+
     arg1 = Factor(Scope.LOCAL, val=functions[-1].get_register())
     arg2 = Factor(vtype=res[2], vname=res[0], val=res[1])
     l = llvmcodes.LLVMCodeLoad(arg1, arg2)
@@ -711,7 +678,6 @@ def p_for_action_2(p):
     for_action_2 :
     '''
 
-    # symbols.is_block = True
     symbols.block_count += 1
 
 
@@ -832,14 +798,11 @@ def p_block_statement(p):
         codelist = []
         factorstack = []
 
-    # if symbols.is_block:
     if symbols.block_count > 0:
         if not symbols.is_else_block:
-            # symbols.is_block = False
             symbols.block_count -= 1
         # 手続きの終了
         if symbols.is_func and not symbols.is_else_block and not symbols.is_while_block:
-            # if symbols.is_func and not symbols.is_else_block:
             symbols.is_func = False
             res = symbols.delete()
             print('DELETE', res)
@@ -862,7 +825,6 @@ def p_begin_action_1(p):
         symbols.block_count += 1
         symbols.is_if = False
 
-    # if not symbols.is_block:
     if symbols.block_count <= 0:
         # 初めて手続きに入ったならコードリストのリセット
         if len(functions) == 1:
@@ -1026,7 +988,10 @@ def p_expression(p):
             codelist.append(l)  # 命令列の末尾に追加
             factorstack.append(retval)  # 加算の結果をスタックにプッシュ
         else:
-            index_calc_type = 'add'
+            if p[2] == "+":
+                index_calc_type = 'add'
+            elif p[2] == "-":
+                index_calc_type = 'minus'
 
 
 def p_term(p):
@@ -1086,7 +1051,6 @@ def p_var_name(p):
         # 後で書き換える
         # 引数じゃない時は加算しない
         if p[1] != 'i':
-            # val = res[1] + 1 + len(functions[-1].arglist)
             val = res[1] + len(functions[-1].arglist)
         else:
             val = res[1]

@@ -41,7 +41,6 @@ class LLVMCodeGlobal(LLVMCode):
 
     def __str__(self):
         return "{} = common global {} {}, align 4".format(str(self.var_name), self.vtype, self.initval)
-        # return str(self.var_name) + " = common global i32 0, align 4"
 
 
 class LLVMCodeLoad(LLVMCode):
